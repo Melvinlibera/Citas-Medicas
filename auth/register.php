@@ -1,4 +1,7 @@
 <?php
+// =========================
+// REGISTRO DE USUARIO - DISEÑO COMPLETO CON SEGURO DINÁMICO
+// =========================
 session_start();
 include("../config/db.php");
 
@@ -7,16 +10,19 @@ $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $nombre   = trim($_POST['nombre']);
-    $cedula   = trim($_POST['cedula']);
-    $telefono = trim($_POST['telefono']);
-    $correo   = trim($_POST['correo']);
-    $password = $_POST['password'];
-    $seguro   = $_POST['seguro'];
+    $nombre        = trim($_POST['nombre']);
+    $cedula        = trim($_POST['cedula']);
+    $telefono      = trim($_POST['telefono']);
+    $correo        = trim($_POST['correo']);
+    $password      = $_POST['password'];
+    $seguro        = $_POST['seguro'];
+    $nombre_seguro = $_POST['nombre_seguro'] ?? null; // solo si tiene seguro
 
-    // Validaciones
-    if(empty($nombre) || empty($cedula) || empty($telefono) || empty($correo) || empty($password)){
+    // Validación básica
+    if(empty($nombre) || empty($cedula) || empty($telefono) || empty($correo) || empty($password) || empty($seguro)){
         $error = "Todos los campos son obligatorios";
+    } elseif($seguro === "si" && empty($nombre_seguro)){
+        $error = "Selecciona tu seguro médico";
     } else {
 
         // Verificar si el correo ya existe
@@ -32,8 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Insertar usuario
             $stmt = $pdo->prepare("INSERT INTO usuarios 
-            (nombre, cedula, telefono, correo, password, seguro, rol)
-            VALUES (?,?,?,?,?,?,?)");
+                (nombre, cedula, telefono, correo, password, seguro, rol)
+                VALUES (?,?,?,?,?,?,?)");
 
             $stmt->execute([
                 $nombre,
@@ -41,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $telefono,
                 $correo,
                 $pass,
-                $seguro,
+                $seguro === "si" ? $nombre_seguro : $seguro, // guardar nombre del seguro si tiene
                 'user' // rol por defecto
             ]);
 
@@ -60,7 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <style>
-/* MISMO ESTILO QUE LOGIN */
+/* ========================= */
+/* ESTILO SOLO PARA REGISTER */
+/* ========================= */
 .register-container {
     min-height: 100vh;
     display: flex;
@@ -146,9 +154,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="email" name="correo" placeholder="Correo" required>
         <input type="password" name="password" placeholder="Contraseña" required>
 
-        <select name="seguro">
-            <option value="si">Seguro médico</option>
-            <option value="no">Privado</option>
+        <select name="seguro" id="seguro">
+            <option value="" disabled selected>¿Tienes seguro médico?</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select>
+
+        <!-- Segundo select oculto por defecto -->
+        <select name="nombre_seguro" id="nombre_seguro" style="display:none; margin-top:8px;">
+            <option value="" disabled selected>Selecciona tu seguro</option>
+            <option value="ARS Palic">ARS Palic</option>
+            <option value="ARS Humano">ARS Humano</option>
+            <option value="ARS Universal">ARS Universal</option>
+            <option value="ARS CMD">ARS CMD</option>
+            <option value="ARS Mapfre">ARS Mapfre</option>
+            <option value="ARS Senasa">ARS Senasa</option>
+            <option value="ARS Monumental">ARS Monumental</option>
         </select>
 
         <button type="submit">Registrarse</button>
@@ -161,6 +182,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 
 </div>
+
+<script>
+// Mostrar el select de seguros solo si se elige "Sí"
+document.getElementById("seguro").addEventListener("change", function() {
+    const seguroSelect = document.getElementById("nombre_seguro");
+    if(this.value === "si"){
+        seguroSelect.style.display = "block";
+    } else {
+        seguroSelect.style.display = "none";
+        seguroSelect.value = "";
+    }
+});
+</script>
 
 </body>
 </html>

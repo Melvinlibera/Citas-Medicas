@@ -17,39 +17,80 @@ if(!isset($_SESSION['usuario'])){
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <style>
+/* ========================= */
+/* DASHBOARD USUARIO MODERNO CON LOGO Y TARJETAS */
+/* ========================= */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
 .dashboard {
     min-height: 100vh;
-    padding: 100px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #0a1f44, #1e90ff);
+    padding: 40px 20px;
+}
+
+/* Logo */
+.dashboard .logo {
+    max-width: 200px;
+    margin-bottom: 40px;
+    transition: transform 0.3s;
+}
+.dashboard .logo:hover {
+    transform: scale(1.05);
+}
+
+/* Contenedor de tarjetas */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Tarjetas estilo cascada */
+.card {
+    background: #ffffff;
+    padding: 30px 25px;
+    border-radius: 20px;
+    width: 220px;
     text-align: center;
-}
-
-.box {
-    background: white;
-    max-width: 500px;
-    margin: auto;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.box h1 {
-    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 600;
     color: #0a1f44;
-}
-
-.links a {
-    display: block;
-    margin: 12px 0;
-    padding: 12px;
-    background: #0a1f44;
-    color: white;
     text-decoration: none;
-    border-radius: 8px;
-    transition: 0.3s;
 }
 
-.links a:hover {
-    background: #1e90ff;
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+/* Icono grande dentro de la tarjeta */
+.card span {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+/* Responsive */
+@media(max-width: 600px){
+    .card-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .card {
+        width: 90%;
+        padding: 20px 15px;
+    }
 }
 </style>
 
@@ -59,17 +100,29 @@ if(!isset($_SESSION['usuario'])){
 
 <div class="dashboard">
 
-    <div class="box">
+    <!-- Logo de la empresa -->
+    <img src="../assets/img/logo.png" alt="Hospital & Human" class="logo">
 
-        <h1>Bienvenido <?php echo $_SESSION['usuario']; ?></h1>
+    <h1 style="color:white; margin-bottom:30px;">Bienvenido, <?php echo $_SESSION['usuario']; ?></h1>
 
-        <div class="links">
-            <a href="agendar.php">📅 Agendar Cita</a>
-            <a href="mis_citas.php">📋 Ver Mis Citas</a>
-            <a href="../index.php">🏠 Inicio</a>
-            <a href="../auth/logout.php">🚪 Cerrar Sesión</a>
-        </div>
-
+    <!-- Contenedor de tarjetas -->
+    <div class="card-container">
+        <a href="agendar.php" class="card">
+            <span>📅</span>
+            Agendar Cita
+        </a>
+        <a href="mis_citas.php" class="card">
+            <span>📋</span>
+            Ver Mis Citas
+        </a>
+        <a href="../index.php" class="card">
+            <span>🏠</span>
+            Inicio
+        </a>
+        <a href="../auth/logout.php" class="card">
+            <span>🚪</span>
+            Cerrar Sesión
+        </a>
     </div>
 
 </div>

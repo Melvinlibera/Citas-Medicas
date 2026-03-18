@@ -1,4 +1,7 @@
 <?php
+// =========================
+// LOGIN DE USUARIO CON DISEÑO PERSONALIZADO
+// =========================
 session_start();
 include("../config/db.php");
 
@@ -15,19 +18,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Completa todos los campos";
     } else {
 
-        // Buscar usuario
+        // Buscar usuario en la base de datos
         $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE correo = ?");
         $stmt->execute([$correo]);
         $user = $stmt->fetch();
 
-        // Verificar contraseña
+        // Verificar contraseña usando password_verify
         if($user && password_verify($password, $user['password'])){
 
+            // Guardar datos en sesión
             $_SESSION['usuario'] = $user['nombre'];
             $_SESSION['rol'] = $user['rol'];
             $_SESSION['id'] = $user['id'];
 
-            // Redirección por rol
+            // Redirección según rol
             if($user['rol'] == 'admin'){
                 header("Location: ../admin/dashboard.php");
             } else {
@@ -51,7 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <style>
-/* ESTILO SOLO PARA LOGIN */
+/* ========================= */
+/* ESTILO SOLO PARA LOGIN    */
+/* ========================= */
 .login-container {
     min-height: 100vh;
     display: flex;

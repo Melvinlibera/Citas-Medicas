@@ -1,21 +1,28 @@
--- ======= CREAR BASE DE DATOS y USARLA =======
+-- =========================
+-- BASE DE DATOS CITAS_MEDICAS
+-- =========================
 DROP DATABASE IF EXISTS citas_medicas;
 CREATE DATABASE citas_medicas;
 USE citas_medicas;
 
--- ======= USUARIOS =======
+-- =========================
+-- TABLA USUARIOS
+-- =========================
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     cedula VARCHAR(20),
     telefono VARCHAR(20),
-    email VARCHAR(100) UNIQUE NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,  -- mantiene tu campo original
     password VARCHAR(255) NOT NULL,
+    seguro VARCHAR(10),
     rol ENUM('admin','user') DEFAULT 'user',
-    seguro ENUM('si','no') DEFAULT 'no'
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ======= ESPECIALIDADES =======
+-- =========================
+-- TABLA ESPECIALIDADES
+-- =========================
 CREATE TABLE especialidades (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -23,7 +30,9 @@ CREATE TABLE especialidades (
     precio DECIMAL(10,2) NOT NULL
 );
 
--- ======= DOCTORES =======
+-- =========================
+-- TABLA DOCTORES
+-- =========================
 CREATE TABLE doctores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -31,49 +40,61 @@ CREATE TABLE doctores (
     FOREIGN KEY (id_especialidad) REFERENCES especialidades(id)
 );
 
--- ======= CITAS =======
+-- =========================
+-- TABLA CITAS
+-- =========================
 CREATE TABLE citas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT,
+    id_usuario INT,
     id_doctor INT,
     fecha DATE NOT NULL,
-    estado ENUM('pendiente','confirmada','cancelada') DEFAULT 'pendiente',
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    hora TIME NOT NULL,
+    estado ENUM('pendiente', 'confirmada', 'cancelada') DEFAULT 'pendiente',
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_doctor) REFERENCES doctores(id)
 );
 
--- ======= INSERTAR ESPECIALIDADES =======
+-- =========================
+-- DATOS INICIALES
+-- =========================
 INSERT INTO especialidades (nombre, descripcion, precio) VALUES
-('Psicología','Atención psicológica y terapia',2000),
-('Medicina General','Consulta básica general',1500),
-('Cardiología','Especialista en corazón',3000),
+('Psicología','Atención y apoyo emocional',2000),
+('Medicina General','Consulta general básica',1500),
+('Cardiología','Corazón y sistema circulatorio',3000),
 ('Ginecología y Obstetricia','Salud femenina y embarazo',2800),
-('Urología','Salud del sistema urinario',2700),
-('Oncología','Cáncer y tumores',3500),
-('Nefrología','Riñones y filtración renal',2600),
+('Urología','Sistema urinario masculino/femenino',2700),
+('Oncología','Diagnóstico y tratamiento de cáncer',3500),
+('Nefrología','Salud de los riñones',2600),
 ('Endocrinología','Hormonas y metabolismo',2400),
 ('Traumatología y Ortopedia','Huesos y músculos',2500),
-('Pediatría','Niños y adolescentes',2200),
-('Neonatología','Recien nacidos',2300),
-('Medicina Intensiva (UCI)','Cuidado crítico',4000),
-('Radiología','Imágenes médicas',2100),
-('Dermatología','Piel',2000),
+('Pediatría','Salud infantil',2200),
+('Neonatología','Cuidados de recién nacidos',2300),
+('Medicina Intensiva (UCI)','Cuidados intensivos críticos',4000),
+('Radiología','Imágenes médicas diagnósticas',2100),
+('Dermatología','Piel, cabello y uñas',2000),
 ('Oftalmología','Ojos y visión',2200);
 
--- ======= INSERTAR DOCTORES =======
 INSERT INTO doctores (nombre, id_especialidad) VALUES
-('Dr. Luis Fernández', 2),
-('Dra. Carmen Rodríguez', 3),
-('Dr. José Martínez', 4),
-('Dra. Laura Gómez', 5),
-('Dr. Ricardo Sánchez', 6),
-('Dra. Patricia Díaz', 7),
-('Dr. Manuel Herrera', 8),
-('Dra. Andrea Castillo', 9),
-('Dr. Javier Morales', 10),
-('Dra. Daniela Ruiz', 11),
-('Dr. Fernando Navarro', 12),
-('Dra. Sofía Méndez', 13),
-('Dr. Alberto Cruz', 14),
-('Dra. Valeria Peña', 15),
-('Dr. Miguel Ortega', 1);
+('Dr. Luis Fernández', 1),
+('Dra. Carmen Rodríguez', 2),
+('Dr. José Martínez', 3),
+('Dra. Laura Gómez', 4),
+('Dr. Ricardo Sánchez', 5),
+('Dra. Patricia Díaz', 6),
+('Dr. Manuel Herrera', 7),
+('Dra. Andrea Castillo', 8),
+('Dr. Javier Morales', 9),
+('Dra. Daniela Ruiz', 10),
+('Dr. Fernando Navarro', 11),
+('Dra. Sofía Méndez', 12),
+('Dr. Alberto Cruz', 13),
+('Dra. Valeria Peña', 14),
+('Dr. Miguel Ortega', 15);
+
+-- =========================
+-- USUARIO ADMIN
+-- =========================
+-- Reemplaza la contraseña hash por tu propia contraseña segura generada con password_hash()
+INSERT INTO usuarios (nombre, cedula, telefono, correo, password, seguro, rol)
+VALUES ('Admin Principal','0000000000','0000000000','admin@clinica.com', 
+       '$2y$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 'si', 'admin');
