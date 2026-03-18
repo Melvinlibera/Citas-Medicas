@@ -1,0 +1,464 @@
+/**
+ * VALIDACIONES.JS - VALIDACIONES DEL LADO DEL CLIENTE
+ * 
+ * Funcionalidad:
+ * - Validaciones para registro de usuarios
+ * - Validaciones para login
+ * - Validaciones para agendamiento de citas
+ * - Validaciones de formato (email, cédula, teléfono, fecha)
+ * - Mensajes de error personalizados
+ * 
+ * Autor: Hospital & Human Development Team XD
+ * 
+ * 
+ * Nota: Estas validaciones son complementarias a las validaciones del servidor.
+ *       SIEMPRE se debe validar en el servidor también.
+ */
+
+/* =========================
+   FUNCIONES BASE DE VALIDACIÓN
+========================= */
+
+/**
+ * Valida si un email tiene formato correcto
+ * @param {string} email - Email a validar
+ * @returns {boolean} - True si es válido
+ */
+function esEmailValido(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+/**
+ * Valida si una cédula dominicana tiene formato correcto
+ * @param {string} cedula - Cédula a validar
+ * @returns {boolean} - True si es válida
+ */
+function esCedulaValida(cedula) {
+    // Remover guiones y espacios
+    const cedulaLimpia = cedula.replace(/[.-\s]/g, '');
+    // Debe ser numérica y tener entre 9 y 11 dígitos
+    return /^\d{9,11}$/.test(cedulaLimpia);
+}
+
+/**
+ * Valida si un teléfono tiene formato correcto
+ * @param {string} telefono - Teléfono a validar
+ * @returns {boolean} - True si es válido
+ */
+function esTelefonoValido(telefono) {
+    // Remover caracteres especiales
+    const telefonoLimpio = telefono.replace(/[.\-\s()]/g, '');
+    // Debe ser numérico y tener entre 7 y 15 dígitos
+    return /^\d{7,15}$/.test(telefonoLimpio);
+}
+
+/**
+ * Valida si una contraseña es fuerte
+ * @param {string} password - Contraseña a validar
+ * @returns {object} - Objeto con resultado y mensaje
+ */
+function esContraseñaFuerte(password) {
+    const resultado = {
+        valida: true,
+        fortaleza: 'débil',
+        mensajes: []
+    };
+
+    if (password.length < 6) {
+        resultado.valida = false;
+        resultado.mensajes.push("Mínimo 6 caracteres");
+    }
+
+    if (password.length < 8) {
+        resultado.fortaleza = 'débil';
+    } else if (password.length < 12) {
+        resultado.fortaleza = 'media';
+    } else {
+        resultado.fortaleza = 'fuerte';
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        resultado.mensajes.push("Incluye mayúsculas");
+    }
+
+    if (!/[0-9]/.test(password)) {
+        resultado.mensajes.push("Incluye números");
+    }
+
+    if (!/[!@#$%^&*]/.test(password)) {
+        resultado.mensajes.push("Incluye caracteres especiales");
+    }
+
+    return resultado;
+}
+
+/**
+ * Valida si una fecha es válida y no está en el pasado
+ * @param {string} fecha - Fecha en formato YYYY-MM-DD
+ * @returns {object} - Objeto con resultado y mensaje
+ */
+function esFechaValida(fecha) {
+    const resultado = {
+        valida: true,
+        mensaje: ""
+    };
+
+    const fechaObj = new Date(fecha);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    if (isNaN(fechaObj.getTime())) {
+        resultado.valida = false;
+        resultado.mensaje = "Fecha inválida";
+        return resultado;
+    }
+
+    if (fechaObj < hoy) {
+        resultado.valida = false;
+        resultado.mensaje = "No se puede agendar una fecha pasada";
+        return resultado;
+    }
+
+    // Validar que no sea más de 6 meses en el futuro
+    const fechaMax = new Date();
+    fechaMax.setMonth(fechaMax.getMonth() + 6);
+
+    if (fechaObj > fechaMax) {
+        resultado.valida = false;
+        resultado.mensaje = "La fecha debe estar dentro de los próximos 6 meses";
+        return resultado;
+    }
+
+    return resultado;
+}
+
+/**
+ * Valida si una hora es válida
+ * @param {string} hora - Hora en formato HH:MM
+ * @returns {boolean} - True si es válida
+ */
+function esHoraValida(hora) {
+    const regex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+    return regex.test(hora);
+}
+
+/**
+ * Mostrar error visual en un campo
+ * @param {HTMLElement} campo - Campo del formulario
+ * @param {string} mensaje - Mensaje de error
+ */
+function mostrarErrorCampo(campo, mensaje) {
+    // Remover error anterior si existe
+    const errorExistente = campo.parentElement.querySelector('.error-mensaje');
+    if (errorExistente) {
+        errorExistente.remove();
+    }
+
+    // Crear elemento de error
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-mensaje';
+    errorDiv.textContent = mensaje;
+    errorDiv.style.cssText = `
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    `;
+
+    // Agregar borde rojo al campo
+    campo.style.borderColor = '#dc3545';
+
+    // Insertar mensaje de error
+    campo.parentElement.appendChild(errorDiv);
+}
+
+/**
+ * Limpiar error visual de un campo
+ * @param {HTMLElement} campo - Campo del formulario
+ */
+function limpiarErrorCampo(campo) {
+    const errorExistente = campo.parentElement.querySelector('.error-mensaje');
+    if (errorExistente) {
+        errorExistente.remove();
+    }
+
+    // Restaurar color del borde
+    campo.style.borderColor = '';
+}
+
+/* =========================
+   VALIDACIÓN DE FORMULARIO DE REGISTRO
+========================= */
+
+/**
+ * Valida el formulario de registro completo
+ * @returns {boolean} - True si es válido, false si no
+ */
+function validarRegistro() {
+    let esValido = true;
+
+    // Obtener campos
+    const nombre = document.querySelector("[name='nombre']");
+    const cedula = document.querySelector("[name='cedula']");
+    const telefono = document.querySelector("[name='telefono']");
+    const correo = document.querySelector("[name='correo']");
+    const password = document.querySelector("[name='password']");
+    const seguro = document.querySelector("[name='seguro']");
+
+    // Validar nombre
+    if (!nombre || !nombre.value.trim()) {
+        mostrarErrorCampo(nombre, "El nombre es obligatorio");
+        esValido = false;
+    } else if (nombre.value.trim().length < 3) {
+        mostrarErrorCampo(nombre, "El nombre debe tener al menos 3 caracteres");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(nombre);
+    }
+
+    // Validar cédula
+    if (!cedula || !cedula.value.trim()) {
+        mostrarErrorCampo(cedula, "La cédula es obligatoria");
+        esValido = false;
+    } else if (!esCedulaValida(cedula.value)) {
+        mostrarErrorCampo(cedula, "Cédula inválida (9-11 dígitos)");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(cedula);
+    }
+
+    // Validar teléfono
+    if (!telefono || !telefono.value.trim()) {
+        mostrarErrorCampo(telefono, "El teléfono es obligatorio");
+        esValido = false;
+    } else if (!esTelefonoValido(telefono.value)) {
+        mostrarErrorCampo(telefono, "Teléfono inválido");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(telefono);
+    }
+
+    // Validar correo
+    if (!correo || !correo.value.trim()) {
+        mostrarErrorCampo(correo, "El correo es obligatorio");
+        esValido = false;
+    } else if (!esEmailValido(correo.value)) {
+        mostrarErrorCampo(correo, "Correo inválido");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(correo);
+    }
+
+    // Validar contraseña
+    if (!password || !password.value) {
+        mostrarErrorCampo(password, "La contraseña es obligatoria");
+        esValido = false;
+    } else {
+        const validacion = esContraseñaFuerte(password.value);
+        if (!validacion.valida) {
+            mostrarErrorCampo(password, validacion.mensajes.join(", "));
+            esValido = false;
+        } else {
+            limpiarErrorCampo(password);
+        }
+    }
+
+    // Validar seguro
+    if (!seguro || !seguro.value) {
+        mostrarErrorCampo(seguro, "Debes indicar si tienes seguro médico");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(seguro);
+
+        // Si tiene seguro, validar que haya seleccionado uno
+        if (seguro.value === "si") {
+            const nombreSeguro = document.querySelector("[name='nombre_seguro']");
+            if (!nombreSeguro || !nombreSeguro.value) {
+                mostrarErrorCampo(nombreSeguro, "Selecciona tu seguro médico");
+                esValido = false;
+            } else {
+                limpiarErrorCampo(nombreSeguro);
+            }
+        }
+    }
+
+    return esValido;
+}
+
+/* =========================
+   VALIDACIÓN DE FORMULARIO DE LOGIN
+========================= */
+
+/**
+ * Valida el formulario de login
+ * @returns {boolean} - True si es válido, false si no
+ */
+function validarLogin() {
+    let esValido = true;
+
+    const correo = document.querySelector("[name='correo']");
+    const password = document.querySelector("[name='password']");
+
+    // Validar correo
+    if (!correo || !correo.value.trim()) {
+        mostrarErrorCampo(correo, "El correo es obligatorio");
+        esValido = false;
+    } else if (!esEmailValido(correo.value)) {
+        mostrarErrorCampo(correo, "Correo inválido");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(correo);
+    }
+
+    // Validar contraseña
+    if (!password || !password.value) {
+        mostrarErrorCampo(password, "La contraseña es obligatoria");
+        esValido = false;
+    } else if (password.value.length < 6) {
+        mostrarErrorCampo(password, "Contraseña incorrecta");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(password);
+    }
+
+    return esValido;
+}
+
+/* =========================
+   VALIDACIÓN DE AGENDAMIENTO DE CITA
+========================= */
+
+/**
+ * Valida el formulario de agendamiento de cita
+ * @returns {boolean} - True si es válido, false si no
+ */
+function validarAgendamiento() {
+    let esValido = true;
+
+    const especialidad = document.querySelector("[name='especialidad']");
+    const doctor = document.querySelector("[name='doctor']");
+    const fecha = document.querySelector("[name='fecha']");
+    const hora = document.querySelector("[name='hora']");
+
+    // Validar especialidad
+    if (!especialidad || !especialidad.value) {
+        mostrarErrorCampo(especialidad, "Selecciona una especialidad");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(especialidad);
+    }
+
+    // Validar doctor
+    if (!doctor || !doctor.value) {
+        mostrarErrorCampo(doctor, "Selecciona un doctor");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(doctor);
+    }
+
+    // Validar fecha
+    if (!fecha || !fecha.value) {
+        mostrarErrorCampo(fecha, "Selecciona una fecha");
+        esValido = false;
+    } else {
+        const validacionFecha = esFechaValida(fecha.value);
+        if (!validacionFecha.valida) {
+            mostrarErrorCampo(fecha, validacionFecha.mensaje);
+            esValido = false;
+        } else {
+            limpiarErrorCampo(fecha);
+        }
+    }
+
+    // Validar hora
+    if (!hora || !hora.value) {
+        mostrarErrorCampo(hora, "Selecciona una hora");
+        esValido = false;
+    } else if (!esHoraValida(hora.value)) {
+        mostrarErrorCampo(hora, "Hora inválida");
+        esValido = false;
+    } else {
+        limpiarErrorCampo(hora);
+    }
+
+    return esValido;
+}
+
+/* =========================
+   INICIALIZACIÓN DE VALIDACIONES
+========================= */
+
+/**
+ * Inicializa las validaciones en tiempo real
+ * Se ejecuta cuando el DOM está listo
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación en tiempo real para campos de email
+    const emailInputs = document.querySelectorAll('input[type="email"]');
+    emailInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value && !esEmailValido(this.value)) {
+                mostrarErrorCampo(this, "Correo inválido");
+            } else if (this.value) {
+                limpiarErrorCampo(this);
+            }
+        });
+    });
+
+    // Validación en tiempo real para campos de cédula
+    const cedulaInputs = document.querySelectorAll('input[name="cedula"]');
+    cedulaInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value && !esCedulaValida(this.value)) {
+                mostrarErrorCampo(this, "Cédula inválida");
+            } else if (this.value) {
+                limpiarErrorCampo(this);
+            }
+        });
+    });
+
+    // Validación en tiempo real para campos de teléfono
+    const telefonoInputs = document.querySelectorAll('input[name="telefono"]');
+    telefonoInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value && !esTelefonoValido(this.value)) {
+                mostrarErrorCampo(this, "Teléfono inválido");
+            } else if (this.value) {
+                limpiarErrorCampo(this);
+            }
+        });
+    });
+
+    // Validación en tiempo real para campos de fecha
+    const fechaInputs = document.querySelectorAll('input[type="date"]');
+    fechaInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.value) {
+                const validacion = esFechaValida(this.value);
+                if (!validacion.valida) {
+                    mostrarErrorCampo(this, validacion.mensaje);
+                } else {
+                    limpiarErrorCampo(this);
+                }
+            }
+        });
+    });
+
+    // Validación en tiempo real para contraseñas
+    const passwordInputs = document.querySelectorAll('input[type="password"]');
+    passwordInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value) {
+                const validacion = esContraseñaFuerte(this.value);
+                if (!validacion.valida) {
+                    mostrarErrorCampo(this, validacion.mensajes.join(", "));
+                } else {
+                    limpiarErrorCampo(this);
+                }
+            }
+        });
+    });
+
+    console.log("Validaciones inicializadas correctamente");
+});
