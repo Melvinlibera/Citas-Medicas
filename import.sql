@@ -97,4 +97,4 @@ INSERT INTO doctores (nombre, id_especialidad) VALUES
 -- Reemplaza la contraseña hash por tu propia contraseña segura generada con password_hash()
 INSERT INTO usuarios (nombre, cedula, telefono, correo, password, seguro, rol)
 VALUES ('Admin Principal','0000000000','0000000000','admin@clinica.com', 
-       '$2y$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 'si', 'admin');
+       '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'si', 'admin'); -- usuario-admin@clinica.com contraseña-admin123
