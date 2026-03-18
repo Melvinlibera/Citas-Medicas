@@ -1,36 +1,34 @@
 <?php
 // =========================
-// CONEXIÓN A LA BASE DE DATOS
+//       CONEXIÓN PDO 
 // =========================
 
-// Datos de conexión
 $host = "localhost";
 $db   = "citas_medicas";
 $user = "root";
 $pass = "";
 
-// Opciones de PDO para seguridad y manejo de errores
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // lanza excepciones
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // devuelve arrays asociativos
-    PDO::ATTR_EMULATE_PREPARES   => false,                  // evita inyección SQL
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // errores con excepción
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // fetch más limpio
+    PDO::ATTR_EMULATE_PREPARES   => false,                  // seguridad real
 ];
 
 try {
-    // Conexión principal
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, $options);
-} catch (PDOException $e) {
-    // Si falla, muestra mensaje y termina
-    die("Error de conexión con la base de datos: " . $e->getMessage());
-}
+    $pdo = new PDO(
+        "mysql:host=$host;dbname=$db;charset=utf8mb4",
+        $user,
+        $pass,
+        $options
+    );
 
-// Función opcional para reconectar si el PDO se pierde (útil en AJAX largos)
-function getPDO() {
-    global $host, $db, $user, $pass, $options;
-    try {
-        return new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, $options);
-    } catch (PDOException $e) {
-        die("Error de conexión al intentar reconectar: " . $e->getMessage());
-    }
+} catch (PDOException $e) {
+
+    // NO mostrar errores en producción
+    die("Error de conexión con la base de datos.");
+    
+    // Para debug (opcional)
+    // echo $e->getMessage();
 }
 ?>
+

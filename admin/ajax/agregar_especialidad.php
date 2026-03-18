@@ -1,32 +1,17 @@
 <?php
-session_start();
-include("../config/db.php");
+include("../../config/db.php");
+header('Content-Type: application/json');
 
-// Verificar sesión y rol admin
-if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
-    echo json_encode(['status'=>'error','message'=>'Acceso denegado']);
-    exit();
-}
-
-// Solo continuar si hay POST
 if($_POST){
-    $nombre = trim($_POST['nombre'] ?? '');
-    $descripcion = trim($_POST['descripcion'] ?? '');
-    $precio = trim($_POST['precio'] ?? 0);
+    $id = $_POST['id'];
+    $nombre = $_POST['nombre'];
+    $descripcion = $_POST['descripcion'];
+    $precio = $_POST['precio'];
 
-    if(!$nombre || !$precio){
-        echo json_encode(['status'=>'error','message'=>'Nombre y precio son obligatorios']);
-        exit();
-    }
+    $stmt = $pdo->prepare("UPDATE especialidades SET nombre=?, descripcion=?, precio=? WHERE id=?");
+    $stmt->execute([$nombre,$descripcion,$precio,$id]);
 
-    try {
-        $stmt = $pdo->prepare("INSERT INTO especialidades (nombre, descripcion, precio) VALUES (?,?,?)");
-        $stmt->execute([$nombre, $descripcion, $precio]);
-        echo json_encode(['status'=>'success','message'=>'Especialidad agregada correctamente']);
-    } catch(PDOException $e){
-        echo json_encode(['status'=>'error','message'=>'Error al agregar especialidad: '.$e->getMessage()]);
-    }
-} else {
-    echo json_encode(['status'=>'error','message'=>'Solicitud inválida']);
+    echo json_encode(['success'=>true,'message'=>'Especialidad actualizada correctamente']);
+    exit;
 }
-?>
+echo json_encode(['success'=>false,'message'=>'Datos inválidos']);

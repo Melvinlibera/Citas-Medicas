@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-03-2026 a las 00:30:41
+-- Tiempo de generación: 18-03-2026 a las 21:27:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `citas` (
   `id` int(11) NOT NULL,
   `id_usuario` int(11) DEFAULT NULL,
+  `id_especialidad` int(11) DEFAULT NULL,
   `id_doctor` int(11) DEFAULT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
@@ -45,29 +46,30 @@ CREATE TABLE `citas` (
 CREATE TABLE `doctores` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `id_especialidad` int(11) DEFAULT NULL
+  `id_especialidad` int(11) DEFAULT NULL,
+  `id_usuario` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `doctores`
 --
 
-INSERT INTO `doctores` (`id`, `nombre`, `id_especialidad`) VALUES
-(1, 'Dr. Luis Fernández', 1),
-(2, 'Dra. Carmen Rodríguez', 2),
-(3, 'Dr. José Martínez', 3),
-(4, 'Dra. Laura Gómez', 4),
-(5, 'Dr. Ricardo Sánchez', 5),
-(6, 'Dra. Patricia Díaz', 6),
-(7, 'Dr. Manuel Herrera', 7),
-(8, 'Dra. Andrea Castillo', 8),
-(9, 'Dr. Javier Morales', 9),
-(10, 'Dra. Daniela Ruiz', 10),
-(11, 'Dr. Fernando Navarro', 11),
-(12, 'Dra. Sofía Méndez', 12),
-(13, 'Dr. Alberto Cruz', 13),
-(14, 'Dra. Valeria Peña', 14),
-(15, 'Dr. Miguel Ortega', 15);
+INSERT INTO `doctores` (`id`, `nombre`, `id_especialidad`, `id_usuario`) VALUES
+(1, 'Dr. Luis Fernández', 1, 7),
+(2, 'Dra. Carmen Rodríguez', 2, 8),
+(3, 'Dr. José Martínez', 3, 9),
+(4, 'Dra. Laura Gómez', 4, 10),
+(5, 'Dr. Ricardo Sánchez', 5, 11),
+(6, 'Dra. Patricia Díaz', 6, 12),
+(7, 'Dr. Manuel Herrera', 7, 13),
+(8, 'Dra. Andrea Castillo', 8, 14),
+(9, 'Dr. Javier Morales', 9, 15),
+(10, 'Dra. Daniela Ruiz', 10, 16),
+(11, 'Dr. Fernando Navarro', 11, 17),
+(12, 'Dra. Sofía Méndez', 12, 18),
+(13, 'Dr. Alberto Cruz', 13, 19),
+(14, 'Dra. Valeria Peña', 14, 20),
+(15, 'Dr. Miguel Ortega', 15, 21);
 
 -- --------------------------------------------------------
 
@@ -126,8 +128,22 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `cedula`, `telefono`, `correo`, `password`, `seguro`, `rol`, `fecha_registro`) VALUES
-(1, 'Melvyn Liberata Torres', '40236101388', '8493509603', 'melvinliberata@hotmail.com', '$2y$10$xLh6cSo7zOOwMU/4U/Zlr.tDPZN22EovHGDuWfsUDYzII5gF5emLy', 'si', 'user', '2026-03-17 23:05:37'),
-(2, 'Admin', '00000000000', '0000000000', 'admin@admin.com', '$2y$10$wH1QYvCz4XxF9JcFhG8lAezJ0Yg7G5mPpW3YQYb5Q4xkLrJ8GkZ6e', 'no', 'admin', '2026-03-17 23:10:18');
+(6, 'Admin Principal', '0000000000', '0000000000', 'admin@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'si', 'admin', '2026-03-18 20:16:56'),
+(7, 'Dr. Luis Fernández', NULL, NULL, 'dr.luisfernández@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(8, 'Dra. Carmen Rodríguez', NULL, NULL, 'dra.carmenrodríguez@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(9, 'Dr. José Martínez', NULL, NULL, 'dr.josémartínez@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(10, 'Dra. Laura Gómez', NULL, NULL, 'dra.lauragómez@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(11, 'Dr. Ricardo Sánchez', NULL, NULL, 'dr.ricardosánchez@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(12, 'Dra. Patricia Díaz', NULL, NULL, 'dra.patriciadíaz@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(13, 'Dr. Manuel Herrera', NULL, NULL, 'dr.manuelherrera@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(14, 'Dra. Andrea Castillo', NULL, NULL, 'dra.andreacastillo@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(15, 'Dr. Javier Morales', NULL, NULL, 'dr.javiermorales@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(16, 'Dra. Daniela Ruiz', NULL, NULL, 'dra.danielaruiz@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(17, 'Dr. Fernando Navarro', NULL, NULL, 'dr.fernandonavarro@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(18, 'Dra. Sofía Méndez', NULL, NULL, 'dra.sofíaméndez@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(19, 'Dr. Alberto Cruz', NULL, NULL, 'dr.albertocruz@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(20, 'Dra. Valeria Peña', NULL, NULL, 'dra.valeriapeña@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46'),
+(21, 'Dr. Miguel Ortega', NULL, NULL, 'dr.miguelortega@clinica.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', '2026-03-18 20:22:46');
 
 --
 -- Índices para tablas volcadas
@@ -139,14 +155,16 @@ INSERT INTO `usuarios` (`id`, `nombre`, `cedula`, `telefono`, `correo`, `passwor
 ALTER TABLE `citas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_usuario` (`id_usuario`),
-  ADD KEY `fk_doctor` (`id_doctor`);
+  ADD KEY `fk_doctor` (`id_doctor`),
+  ADD KEY `id_especialidad` (`id_especialidad`);
 
 --
 -- Indices de la tabla `doctores`
 --
 ALTER TABLE `doctores`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_especialidad` (`id_especialidad`);
+  ADD KEY `id_especialidad` (`id_especialidad`),
+  ADD KEY `fk_doctor_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `especialidades`
@@ -159,7 +177,10 @@ ALTER TABLE `especialidades`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `correo` (`correo`);
+  ADD UNIQUE KEY `correo` (`correo`),
+  ADD UNIQUE KEY `cedula` (`cedula`),
+  ADD UNIQUE KEY `cedula_2` (`cedula`),
+  ADD UNIQUE KEY `cedula_3` (`cedula`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -169,7 +190,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `doctores`
@@ -187,7 +208,7 @@ ALTER TABLE `especialidades`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Restricciones para tablas volcadas
@@ -199,6 +220,7 @@ ALTER TABLE `usuarios`
 ALTER TABLE `citas`
   ADD CONSTRAINT `citas_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `citas_ibfk_2` FOREIGN KEY (`id_doctor`) REFERENCES `doctores` (`id`),
+  ADD CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`id_especialidad`) REFERENCES `especialidades` (`id`),
   ADD CONSTRAINT `fk_doctor` FOREIGN KEY (`id_doctor`) REFERENCES `doctores` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 
@@ -206,7 +228,8 @@ ALTER TABLE `citas`
 -- Filtros para la tabla `doctores`
 --
 ALTER TABLE `doctores`
-  ADD CONSTRAINT `doctores_ibfk_1` FOREIGN KEY (`id_especialidad`) REFERENCES `especialidades` (`id`);
+  ADD CONSTRAINT `doctores_ibfk_1` FOREIGN KEY (`id_especialidad`) REFERENCES `especialidades` (`id`),
+  ADD CONSTRAINT `fk_doctor_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
