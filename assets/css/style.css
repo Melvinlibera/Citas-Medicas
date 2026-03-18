@@ -1,0 +1,349 @@
+/* =========================
+   VARIABLES GLOBALES (SISTEMA DE DISEÑO)
+========================= */
+:root {
+    --primary: #0a1f44;
+    --secondary: #1e90ff;
+    --background: #FBFBFB;
+    --white: #ffffff;
+    --text: #222;
+    --text-light: #555;
+    --success: #28a745;
+    --error: #dc3545;
+
+    --radius: 14px;
+    --transition: all 0.3s ease;
+}
+
+/* =========================
+   RESET / FIX GLOBAL
+========================= */
+body {
+    margin: 0 !important;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+}
+
+/* =========================
+   HEADER
+========================= */
+#header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--background);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px 0;
+    transition: var(--transition);
+    z-index: 1000;
+}
+
+/* LOGO */
+.logo {
+    max-width: 110px;
+    height: auto;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+/* HEADER SCROLL */
+#header.scrolled {
+    justify-content: space-between;
+    padding: 10px 30px;
+    background: var(--primary);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* LOGO SCROLL */
+#header.scrolled .logo {
+    max-width: 75px;
+}
+
+/* =========================
+   NAV (FIX TOTAL)
+========================= */
+.nav {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav span {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.nav a {
+    text-decoration: none;
+    background: var(--primary);
+    color: var(--white);
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.nav a:hover {
+    background: var(--secondary);
+}
+
+/* CUANDO SCROLL */
+#header.scrolled .nav a {
+    background: var(--white);
+    color: var(--primary);
+}
+
+#header.scrolled .nav span {
+    color: var(--white);
+}
+
+/* =========================
+   HERO
+========================= */
+.hero {
+    min-height: 90vh;
+    margin-top: 70px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 15px;
+    padding: 40px 20px;
+
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
+    text-align: center;
+}
+
+.hero h1,
+.hero h2 {
+    animation: fadeUp 1s ease forwards;
+    opacity: 0;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin: 0;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+.hero h2 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 400;
+    opacity: 0.9;
+    max-width: 500px;
+}
+
+/* =========================
+   ANIMACIONES
+========================= */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   INFO
+========================= */
+.info {
+    padding: 80px 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+
+    background: var(--white);
+    padding: 35px;
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+
+.container:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.container h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: var(--primary);
+}
+
+.container p {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--text-light);
+}
+
+/* =========================
+   SECCIONES
+========================= */
+.section {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.section h2 {
+    font-size: 26px;
+    color: var(--primary);
+}
+
+/* =========================
+   ESPECIALIDADES
+========================= */
+.cards {
+    margin-top: 40px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cards a {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 25px 20px;
+
+    text-decoration: none;
+    color: var(--primary);
+
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.cards a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.cards span {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.cards a:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    background: var(--secondary);
+    color: var(--white);
+}
+
+/* =========================
+   BOTONES
+========================= */
+.section a {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 22px;
+
+    border-radius: 8px;
+    text-decoration: none;
+
+    background: var(--primary);
+    color: var(--white);
+
+    transition: var(--transition);
+}
+
+.section a:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+}
+
+/* =========================
+   MENSAJES
+========================= */
+.success {
+    color: var(--success);
+    background: #eafaf1;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.error {
+    color: var(--error);
+    background: #fdeaea;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero h2 {
+        font-size: 15px;
+    }
+
+    .logo {
+        max-width: 85px;
+    }
+
+    #header.scrolled .logo {
+        max-width: 65px;
+    }
+
+    .container {
+        padding: 25px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .nav {
+        right: 15px;
+        top: 15px;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+}
