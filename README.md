@@ -1,4 +1,4 @@
-# Hospital & Human - Sistema de Citas Médicas v2.0
+# Hospital & Human - Sistema de Citas Médicas v0.5
 
 Un sistema completo de gestión de citas médicas desarrollado con PHP, MySQL y JavaScript.
 
@@ -89,7 +89,7 @@ Ver [DOCUMENTACION_PROYECTO.md](DOCUMENTACION_PROYECTO.md) para:
 ## Contacto
 
 - Email: info@hospitalandhuman.com
-- Teléfono: +1 (809) 123-4567
+- Teléfono: +1 (849) 350-9603
 
 ## Licencia
 
@@ -97,4 +97,4 @@ MIT License - Todos los derechos reservados
 
 ---
 
-Versión 2.0 - Marzo 2026
+Versión v0.5 - Marzo 2026
