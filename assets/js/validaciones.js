@@ -7,13 +7,24 @@
  * - Validaciones para agendamiento de citas
  * - Validaciones de formato (email, cédula, teléfono, fecha)
  * - Mensajes de error personalizados
+ * - Validaciones robustas con expresiones regulares
  * 
  * Autor: Hospital & Human Development Team XD
- * 
  * 
  * Nota: Estas validaciones son complementarias a las validaciones del servidor.
  *       SIEMPRE se debe validar en el servidor también.
  */
+
+/* =========================
+   EXPRESIONES REGULARES
+========================= */
+const REGEX = {
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    CEDULA: /^\d{9,11}$/,
+    TELEFONO: /^\d{7,15}$/,
+    NOMBRE: /^[a-zA-Záéíóúñ\s]{3,100}$/,
+    PASSWORD_MIN: /^.{6,}$/
+};
 
 /* =========================
    FUNCIONES BASE DE VALIDACIÓN
@@ -25,8 +36,7 @@
  * @returns {boolean} - True si es válido
  */
 function esEmailValido(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
+    return REGEX.EMAIL.test(email);
 }
 
 /**
@@ -38,7 +48,7 @@ function esCedulaValida(cedula) {
     // Remover guiones y espacios
     const cedulaLimpia = cedula.replace(/[.-\s]/g, '');
     // Debe ser numérica y tener entre 9 y 11 dígitos
-    return /^\d{9,11}$/.test(cedulaLimpia);
+    return REGEX.CEDULA.test(cedulaLimpia);
 }
 
 /**
@@ -50,7 +60,16 @@ function esTelefonoValido(telefono) {
     // Remover caracteres especiales
     const telefonoLimpio = telefono.replace(/[.\-\s()]/g, '');
     // Debe ser numérico y tener entre 7 y 15 dígitos
-    return /^\d{7,15}$/.test(telefonoLimpio);
+    return REGEX.TELEFONO.test(telefonoLimpio);
+}
+
+/**
+ * Valida si un nombre tiene formato correcto
+ * @param {string} nombre - Nombre a validar
+ * @returns {boolean} - True si es válido
+ */
+function esNombreValido(nombre) {
+    return nombre.trim().length >= 3 && nombre.trim().length <= 100;
 }
 
 /**
@@ -149,6 +168,8 @@ function esHoraValida(hora) {
  * @param {string} mensaje - Mensaje de error
  */
 function mostrarErrorCampo(campo, mensaje) {
+    if (!campo) return;
+    
     // Remover error anterior si existe
     const errorExistente = campo.parentElement.querySelector('.error-mensaje');
     if (errorExistente) {
@@ -178,6 +199,8 @@ function mostrarErrorCampo(campo, mensaje) {
  * @param {HTMLElement} campo - Campo del formulario
  */
 function limpiarErrorCampo(campo) {
+    if (!campo) return;
+    
     const errorExistente = campo.parentElement.querySelector('.error-mensaje');
     if (errorExistente) {
         errorExistente.remove();
@@ -210,8 +233,8 @@ function validarRegistro() {
     if (!nombre || !nombre.value.trim()) {
         mostrarErrorCampo(nombre, "El nombre es obligatorio");
         esValido = false;
-    } else if (nombre.value.trim().length < 3) {
-        mostrarErrorCampo(nombre, "El nombre debe tener al menos 3 caracteres");
+    } else if (!esNombreValido(nombre.value)) {
+        mostrarErrorCampo(nombre, "El nombre debe tener entre 3 y 100 caracteres");
         esValido = false;
     } else {
         limpiarErrorCampo(nombre);
@@ -233,7 +256,7 @@ function validarRegistro() {
         mostrarErrorCampo(telefono, "El teléfono es obligatorio");
         esValido = false;
     } else if (!esTelefonoValido(telefono.value)) {
-        mostrarErrorCampo(telefono, "Teléfono inválido");
+        mostrarErrorCampo(telefono, "Teléfono inválido (7-15 dígitos)");
         esValido = false;
     } else {
         limpiarErrorCampo(telefono);
@@ -359,7 +382,7 @@ function validarAgendamiento() {
 
     // Validar fecha
     if (!fecha || !fecha.value) {
-        mostrarErrorCampo(fecha, "Selecciona una fecha");
+        mostrarErrorCampo(fecha, "La fecha es obligatoria");
         esValido = false;
     } else {
         const validacionFecha = esFechaValida(fecha.value);
@@ -373,7 +396,7 @@ function validarAgendamiento() {
 
     // Validar hora
     if (!hora || !hora.value) {
-        mostrarErrorCampo(hora, "Selecciona una hora");
+        mostrarErrorCampo(hora, "La hora es obligatoria");
         esValido = false;
     } else if (!esHoraValida(hora.value)) {
         mostrarErrorCampo(hora, "Hora inválida");
@@ -386,16 +409,15 @@ function validarAgendamiento() {
 }
 
 /* =========================
-   INICIALIZACIÓN DE VALIDACIONES
+   INICIALIZACIÓN DE VALIDACIONES EN TIEMPO REAL
 ========================= */
 
 /**
- * Inicializa las validaciones en tiempo real
- * Se ejecuta cuando el DOM está listo
+ * Inicializa validaciones en tiempo real para un formulario
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación en tiempo real para campos de email
-    const emailInputs = document.querySelectorAll('input[type="email"]');
+    // Validar email en tiempo real
+    const emailInputs = document.querySelectorAll("input[type='email']");
     emailInputs.forEach(input => {
         input.addEventListener('blur', function() {
             if (this.value && !esEmailValido(this.value)) {
@@ -406,8 +428,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación en tiempo real para campos de cédula
-    const cedulaInputs = document.querySelectorAll('input[name="cedula"]');
+    // Validar cédula en tiempo real
+    const cedulaInputs = document.querySelectorAll("input[name='cedula']");
     cedulaInputs.forEach(input => {
         input.addEventListener('blur', function() {
             if (this.value && !esCedulaValida(this.value)) {
@@ -418,8 +440,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación en tiempo real para campos de teléfono
-    const telefonoInputs = document.querySelectorAll('input[name="telefono"]');
+    // Validar teléfono en tiempo real
+    const telefonoInputs = document.querySelectorAll("input[name='telefono']");
     telefonoInputs.forEach(input => {
         input.addEventListener('blur', function() {
             if (this.value && !esTelefonoValido(this.value)) {
@@ -430,8 +452,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación en tiempo real para campos de fecha
-    const fechaInputs = document.querySelectorAll('input[type="date"]');
+    // Validar fecha en tiempo real
+    const fechaInputs = document.querySelectorAll("input[name='fecha']");
     fechaInputs.forEach(input => {
         input.addEventListener('change', function() {
             if (this.value) {
@@ -444,21 +466,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Validación en tiempo real para contraseñas
-    const passwordInputs = document.querySelectorAll('input[type="password"]');
-    passwordInputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value) {
-                const validacion = esContraseñaFuerte(this.value);
-                if (!validacion.valida) {
-                    mostrarErrorCampo(this, validacion.mensajes.join(", "));
-                } else {
-                    limpiarErrorCampo(this);
-                }
-            }
-        });
-    });
-
-    console.log("Validaciones inicializadas correctamente");
 });
