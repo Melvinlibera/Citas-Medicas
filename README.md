@@ -48,8 +48,8 @@ http://localhost/Citas-Medicas/
 
 | Rol | Email | Contraseña |
 |-----|-------|-----------|
-| Admin | admin@hospitalandhuman.com | 123456 |
-| Doctor | dr.luis@hospitalandhuman.com | 123456 |
+| Admin | admin@hospitalandhuman.com | admin123 |
+| Doctor | dr.luis@hospitalandhuman.com | admin123 |
 
 ## Mejoras Implementadas v2.0
 
