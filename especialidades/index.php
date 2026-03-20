@@ -1,7 +1,48 @@
 <?php
+/**
+ * LISTADO DE ESPECIALIDADES MÉDICAS - HOSPITAL & HUMAN
+ *
+ * Funcionalidad:
+ * - Página pública que muestra todas las especialidades médicas disponibles
+ * - Lista completa de servicios médicos ofrecidos por la institución
+ * - Información detallada: nombre, descripción y precio de cada especialidad
+ * - Enlaces a páginas de detalle para más información
+ * - Accesible sin necesidad de autenticación
+ *
+ * Información mostrada por especialidad:
+ * - Nombre de la especialidad médica
+ * - Descripción detallada de los servicios
+ * - Precio de consulta en pesos dominicanos (RD$)
+ * - Botón "Ver más" para acceder a doctores disponibles
+ *
+ * Características de la página:
+ * - Diseño responsive con tarjetas visuales
+ * - Información clara y accesible para pacientes
+ * - Navegación intuitiva hacia agendamiento de citas
+ * - Optimizada para motores de búsqueda (SEO)
+ *
+ * Base de datos consultada:
+ * - Tabla especialidades: id, nombre, descripcion, precio
+ * - Consulta simple sin JOIN (información independiente)
+ * - Resultados ordenados por ID (orden de inserción)
+ *
+ * Funcionalidades relacionadas:
+ * - Enlace a especialidades/ver.php para más detalles
+ * - Integración con sistema de agendamiento
+ * - Información base para selección de especialidad
+ *
+ * Público objetivo:
+ * - Pacientes potenciales que buscan servicios médicos
+ * - Usuarios que necesitan elegir especialidad para cita
+ * - Visitantes interesados en servicios de la institución
+ *
+ * No requiere autenticación (página pública)
+ */
+
 include("../config/db.php");
 
-// Obtener todas las especialidades
+// Obtener todas las especialidades médicas disponibles
+// Consulta simple a tabla especialidades para información pública
 $stmt = $pdo->prepare("SELECT * FROM especialidades");
 $stmt->execute();
 

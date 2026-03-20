@@ -2,7 +2,14 @@
 session_start();
 header('Content-Type: application/json');
 
-include("../config/db.php");
+include("../../config/db.php");
+
+// Validar sesión
+if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
+    http_response_code(403);
+    echo json_encode(["success" => false, "message" => "No autorizado"]);
+    exit;
+}
 
 // SEGURIDAD
 if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){

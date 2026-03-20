@@ -1,4 +1,35 @@
 <?php
+/**
+ * GESTIÓN DE USUARIOS - PANEL ADMINISTRATIVO
+ *
+ * Funcionalidad:
+ * - Listar todos los usuarios registrados en el sistema
+ * - Mostrar información: nombre, cédula, teléfono, correo, rol, fecha de registro
+ * - Agregar nuevos usuarios con validación de campos
+ * - Editar información de usuarios existentes
+ * - Cambiar rol de usuario (admin, doctor, user)
+ * - Eliminar usuarios del sistema
+ *
+ * Formularios incluidos:
+ * - Modal de agregar usuario: nombre, cédula, teléfono, correo, contraseña, rol
+ * - Modal de editar usuario: campos editables con validaciones
+ * - Funciones AJAX para operaciones CRUD
+ *
+ * Validaciones implementadas:
+ * - Campos obligatorios en formularios
+ * - Formato de cédula dominicana (10 dígitos)
+ * - Formato de teléfono dominicano (10 dígitos)
+ * - Correo electrónico válido
+ * - Contraseña mínimo 6 caracteres
+ * - Roles válidos del sistema
+ *
+ * Seguridad:
+ * - Validación de sesión y rol de administrador
+ * - Prepared statements en todas las operaciones
+ * - Sanitización de datos de entrada
+ * - Control de acceso por permisos
+ */
+
 session_start();
 include("../config/db.php");
 
@@ -7,7 +38,7 @@ if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
     exit();
 }
 
-// Traer usuarios
+// Traer usuarios ordenados por fecha de registro (más recientes primero)
 $stmt = $pdo->query("SELECT * FROM usuarios ORDER BY fecha_registro DESC");
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -75,6 +106,7 @@ border:1px solid #ddd;
             <tr>
                 <th>Nombre</th>
                 <th>Cédula</th>
+                <th>Teléfono</th>
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Fecha Registro</th>
@@ -85,6 +117,7 @@ border:1px solid #ddd;
             <tr>
                 <td><?= $u['nombre'] ?></td>
                 <td><?= $u['cedula'] ?></td>
+                <td><?= $u['telefono'] ?></td>
                 <td><?= $u['correo'] ?></td>
                 <td><?= $u['rol'] ?></td>
                 <td><?= $u['fecha_registro'] ?></td>
@@ -94,6 +127,7 @@ border:1px solid #ddd;
                         <?= $u['id'] ?>,
                         '<?= $u['nombre'] ?>',
                         '<?= $u['cedula'] ?>',
+                        '<?= $u['telefono'] ?>',
                         '<?= $u['correo'] ?>',
                         '<?= $u['rol'] ?>'
                     )">Editar</button>
@@ -116,10 +150,11 @@ border:1px solid #ddd;
 <h3>Agregar Usuario</h3>
 
 <form id="formAdd">
-<input name="nombre" required>
-<input name="cedula" required>
-<input type="email" name="correo" required>
-<input type="password" name="password" required>
+<input name="nombre" placeholder="Nombre completo" required>
+<input name="cedula" placeholder="Cédula (10 dígitos)" required>
+<input type="email" name="correo" placeholder="Correo electrónico" required>
+<input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+<input name="telefono" placeholder="Teléfono (10 dígitos)" required>
 
 <select name="rol">
 <option value="user">Usuario</option>
@@ -141,11 +176,12 @@ border:1px solid #ddd;
 <form id="formEdit">
 <input type="hidden" name="id" id="editId">
 
-<input name="nombre" id="editNombre" required>
-<input name="cedula" id="editCedula" required>
-<input type="email" name="correo" id="editCorreo" required>
+<input name="nombre" id="editNombre" placeholder="Nombre completo" required>
+<input name="cedula" id="editCedula" placeholder="Cédula (10 dígitos)" required>
+<input type="email" name="correo" id="editCorreo" placeholder="Correo electrónico" required>
+<input name="telefono" id="editTelefono" placeholder="Teléfono (10 dígitos)" required>
 
-<input type="password" name="password" placeholder="Nueva contraseña">
+<input type="password" name="password" placeholder="Nueva contraseña (opcional)">
 
 <select name="rol" id="editRol">
 <option value="user">Usuario</option>
@@ -170,6 +206,7 @@ const formEdit = document.getElementById("formEdit");
 const editId = document.getElementById("editId");
 const editNombre = document.getElementById("editNombre");
 const editCedula = document.getElementById("editCedula");
+const editTelefono = document.getElementById("editTelefono");
 const editCorreo = document.getElementById("editCorreo");
 const editRol = document.getElementById("editRol");
 
@@ -177,10 +214,11 @@ const editRol = document.getElementById("editRol");
 function abrirAdd(){ modalAdd.style.display='flex'; }
 function cerrarAdd(){ modalAdd.style.display='none'; }
 
-function abrirEdit(id,nombre,cedula,correo,rol){
+function abrirEdit(id,nombre,cedula,telefono,correo,rol){
     editId.value=id;
     editNombre.value=nombre;
     editCedula.value=cedula;
+    editTelefono.value=telefono;
     editCorreo.value=correo;
     editRol.value=rol;
     modalEdit.style.display='flex';

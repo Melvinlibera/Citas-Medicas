@@ -1,16 +1,59 @@
 <?php
+/**
+ * MIS CITAS - PANEL DEL USUARIO
+ *
+ * Funcionalidad:
+ * - Muestra todas las citas médicas del usuario autenticado
+ * - Lista completa con detalles de cada cita
+ * - Información organizada: especialidad, doctor, fecha, hora, estado
+ * - Opción de cancelar citas cuando están en estado 'pendiente'
+ * - Vista ordenada por fecha (más recientes primero)
+ *
+ * Información mostrada por cita:
+ * - Especialidad médica consultada
+ * - Nombre del doctor asignado
+ * - Fecha de la cita (formato legible)
+ * - Hora de la cita
+ * - Estado actual: pendiente, confirmada, cancelada
+ * - Botón de acción (cancelar si aplica)
+ *
+ * Estados de cita y acciones permitidas:
+ * - pendiente: Puede ser cancelada por el usuario
+ * - confirmada: No puede ser modificada por el usuario
+ * - cancelada: Mostrada como histórica
+ *
+ * Funcionalidades disponibles:
+ * - Visualización de historial completo de citas
+ * - Cancelación de citas pendientes
+ * - Navegación de vuelta al dashboard
+ * - Interfaz responsive y fácil de usar
+ *
+ * Consultas realizadas:
+ * - JOIN con especialidades para nombre legible
+ * - JOIN con doctores para nombre del médico
+ * - Filtro por id_usuario de la sesión
+ * - Ordenamiento por fecha y hora descendente
+ *
+ * Seguridad:
+ * - Validación de sesión por ID de usuario
+ * - Prepared statements para prevenir SQL injection
+ * - Solo el propietario puede ver sus citas
+ * - Control de acceso a operaciones de modificación
+ */
+
 session_start();
 include("../config/db.php");
 
-// Verifica login
+// Verificar que el usuario esté logueado
 if(!isset($_SESSION['id'])){
     header("Location: ../auth/login.php");
     exit;
 }
 
-// Trae todas las citas del usuario
+// Obtener todas las citas del usuario actual
+// JOIN con tablas relacionadas para mostrar nombres legibles
 $stmt = $pdo->prepare("
-    SELECT citas.id, citas.fecha, citas.hora, citas.estado, 
+    SELECT citas.id, citas.fecha, citas.hora, citas.estado,
            especialidades.nombre AS especialidad, doctores.nombre AS doctor
     FROM citas
     JOIN doctores ON citas.id_doctor = doctores.id

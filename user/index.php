@@ -11,7 +11,7 @@ session_start();
    VALIDAR SESIÓN
 ========================= */
 if (!isset($_SESSION['usuario'])) {
-    header("Location: /citas_medicas/login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 

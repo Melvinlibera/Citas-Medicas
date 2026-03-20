@@ -1,4 +1,44 @@
 <?php
+/**
+ * GESTIÓN DE CITAS - PANEL ADMINISTRATIVO
+ *
+ * Funcionalidad:
+ * - Listar todas las citas médicas del sistema
+ * - Mostrar información completa: paciente, doctor, especialidad, fecha, hora, estado
+ * - Filtrar citas por estado (pendiente, confirmada, cancelada)
+ * - Cambiar estado de citas (confirmar, cancelar)
+ * - Ver detalles completos de cada cita
+ *
+ * Estados de cita:
+ * - pendiente: Cita agendada pero no confirmada
+ * - confirmada: Cita confirmada por administrador o doctor
+ * - cancelada: Cita cancelada por paciente, doctor o admin
+ *
+ * Información mostrada por cita:
+ * - ID único de la cita
+ * - Nombre del paciente (usuario)
+ * - Nombre del doctor asignado
+ * - Especialidad médica
+ * - Fecha y hora de la cita
+ * - Estado actual de la cita
+ * - Fecha de creación del registro
+ *
+ * Operaciones disponibles:
+ * - Cambiar estado de cita mediante AJAX
+ * - Filtrado visual por estado
+ * - Vista ordenada por fecha (más recientes primero)
+ *
+ * Relaciones consultadas:
+ * - citas ↔ usuarios (id_usuario)
+ * - citas ↔ doctores (id_doctor)
+ * - citas ↔ especialidades (id_especialidad)
+ *
+ * Seguridad:
+ * - Validación de sesión y rol de administrador
+ * - Prepared statements en consultas
+ * - Control de acceso a operaciones sensibles
+ */
+
 session_start();
 include("../config/db.php");
 
@@ -7,7 +47,8 @@ if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
     exit();
 }
 
-// Traer citas
+// Traer todas las citas con información relacionada
+// JOIN múltiple para obtener nombres legibles en lugar de IDs
 $stmt = $pdo->query("
     SELECT citas.*, usuarios.nombre AS usuario_nombre,
            doctores.nombre AS doctor_nombre,
@@ -20,7 +61,7 @@ $stmt = $pdo->query("
 ");
 $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Datos para selects
+// Datos para selects en posibles formularios de edición
 $usuarios = $pdo->query("SELECT id, nombre FROM usuarios")->fetchAll(PDO::FETCH_ASSOC);
 $doctores = $pdo->query("SELECT id, nombre FROM doctores")->fetchAll(PDO::FETCH_ASSOC);
 $especialidades = $pdo->query("SELECT id, nombre FROM especialidades")->fetchAll(PDO::FETCH_ASSOC);

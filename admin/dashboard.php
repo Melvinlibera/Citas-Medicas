@@ -1,9 +1,31 @@
 <?php
+/**
+ * DASHBOARD DEL ADMINISTRADOR - HOSPITAL & HUMAN
+ *
+ * Funcionalidad:
+ * - Panel principal del administrador del sistema
+ * - Muestra estadísticas generales: usuarios, doctores, citas, especialidades
+ * - Tarjetas informativas con métricas clave del sistema
+ * - Acceso rápido a las funciones de gestión administrativa
+ *
+ * Estadísticas mostradas:
+ * - Total de usuarios registrados
+ * - Total de doctores activos
+ * - Total de citas agendadas
+ * - Total de especialidades médicas disponibles
+ *
+ * Seguridad:
+ * - Validación estricta de sesión y rol de administrador
+ * - Redirección automática si no está autorizado
+ * - Solo administradores pueden acceder a esta página
+ */
+
 session_start();
 if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
     header("Location: ../auth/login.php");
     exit();
 }
+require_once '../config/db.php';
 ?>
 
 <!DOCTYPE html>

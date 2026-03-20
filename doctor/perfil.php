@@ -26,8 +26,14 @@ $id_doctor = $_SESSION['id_usuario'];
 $mensaje = "";
 $error = "";
 
-// Obtener información del doctor
-$stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ? AND rol = 'doctor'");
+// Obtener información del doctor con su especialidad
+$stmt = $pdo->prepare("
+    SELECT u.*, d.id_especialidad, e.nombre as especialidad_nombre
+    FROM usuarios u
+    LEFT JOIN doctores d ON d.id_usuario = u.id
+    LEFT JOIN especialidades e ON e.id = d.id_especialidad
+    WHERE u.id = ? AND u.rol = 'doctor'
+");
 $stmt->execute([$id_doctor]);
 $doctor = $stmt->fetch();
 
@@ -277,7 +283,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
                 </div>
                 <div class="info-item">
                     <div class="info-label">Rol:</div>
-                    <div class="info-value">Doctor</div>
+                    <div class="info-value">👨‍⚕️ Doctor</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Especialidad:</div>
+                    <div class="info-value" style="font-weight: 600; color: var(--secondary);">
+                        <?php echo $doctor['especialidad_nombre'] ? htmlspecialchars($doctor['especialidad_nombre']) : '<span style="color: #dc3545; font-style: italic;">Sin especialidad asignada</span>'; ?>
+                    </div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Fecha de Registro:</div>

@@ -1,7 +1,38 @@
 <?php
+/**
+ * DASHBOARD DEL USUARIO (PACIENTE) - HOSPITAL & HUMAN
+ *
+ * Funcionalidad:
+ * - Panel de bienvenida personalizado para usuarios regulares (pacientes)
+ * - Muestra nombre del usuario autenticado
+ * - Tarjetas de acceso rápido a funcionalidades principales
+ * - Interfaz visualmente atractiva con animaciones CSS
+ * - Navegación intuitiva hacia agendamiento y consultas
+ *
+ * Elementos visuales:
+ * - Header con nombre de usuario y mensaje de bienvenida
+ * - Tres tarjetas principales:
+ *   • "Agendar Cita": Enlace a formulario de agendamiento
+ *   • "Mis Citas": Enlace a historial de citas
+ *   • "Mi Perfil": Enlace a información personal
+ * - Diseño responsive con gradientes y sombras
+ *
+ * Funcionalidades disponibles desde dashboard:
+ * - Acceso directo a agendar nueva cita
+ * - Consulta de citas existentes
+ * - Gestión de información personal
+ * - Opción de cerrar sesión
+ *
+ * Seguridad:
+ * - Validación estricta de sesión de usuario
+ * - Redirección automática a login si no está autenticado
+ * - Solo usuarios con rol 'user' pueden acceder
+ * - No permite acceso de administradores o doctores
+ */
+
 session_start();
 
-// Verificar sesión
+// Verificar sesión de usuario regular
 if(!isset($_SESSION['usuario'])){
     header("Location: ../auth/login.php");
     exit();

@@ -1,4 +1,43 @@
 <?php
+/**
+ * GESTIÓN DE DOCTORES - PANEL ADMINISTRATIVO
+ *
+ * Funcionalidad:
+ * - Listar todos los doctores registrados en el sistema
+ * - Mostrar información: nombre del doctor y especialidad médica
+ * - Agregar nuevos doctores con enlace automático a especialidad
+ * - Editar información del doctor y cambiar especialidad
+ * - Eliminar doctores del sistema
+ *
+ * Relaciones importantes:
+ * - Cada doctor está asociado a UNA especialidad médica
+ * - Los doctores son usuarios del sistema (rol = 'doctor')
+ * - La relación doctor-especialidad es crítica para el agendamiento
+ *
+ * Formularios incluidos:
+ * - Modal de agregar doctor: nombre, cédula, correo, especialidad
+ * - Modal de editar doctor: nombre y especialidad editable
+ * - Funciones AJAX para operaciones CRUD
+ *
+ * Proceso de creación de doctor:
+ * 1. Se crea el usuario con rol 'doctor'
+ * 2. Se crea el registro en tabla doctores
+ * 3. Se enlaza automáticamente con la especialidad seleccionada
+ * 4. Contraseña por defecto: 123456 (debe cambiarse al primer login)
+ *
+ * Validaciones implementadas:
+ * - Campos obligatorios en formularios
+ * - Formato de cédula dominicana (10 dígitos)
+ * - Correo electrónico válido y único
+ * - Especialidad debe existir en el sistema
+ * - Contraseña mínimo 6 caracteres
+ *
+ * Seguridad:
+ * - Validación de sesión y rol de administrador
+ * - Prepared statements en todas las operaciones
+ * - Control de integridad referencial
+ */
+
 session_start();
 include("../config/db.php");
 
@@ -7,7 +46,8 @@ if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
     exit();
 }
 
-// Traer doctores (IMPORTANTE: traer id_especialidad)
+// Traer doctores con información de especialidad
+// IMPORTANTE: JOIN con especialidades para mostrar nombre de especialidad
 $stmt = $pdo->query("
     SELECT d.id, d.nombre AS doctor, d.id_especialidad, e.nombre AS especialidad
     FROM doctores d
@@ -106,8 +146,9 @@ input, select{
         <h3>Agregar Doctor</h3>
 
         <form id="formAddDoctor">
-            <input type="text" name="nombre" placeholder="Nombre" required>
-
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="text" name="cedula" placeholder="Cédula (XXX-XXXXXXX-X)" required>
+            <input type="email" name="correo" placeholder="Correo electrónico" required>            <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
             <select name="id_especialidad" required>
                 <option value="">Selecciona Especialidad</option>
                 <?php

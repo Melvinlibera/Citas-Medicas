@@ -1,3 +1,49 @@
+<?php
+/**
+ * BARRA LATERAL (SIDEBAR) - PANEL ADMINISTRATIVO
+ *
+ * Funcionalidad:
+ * - Componente de navegación lateral para panel de administración
+ * - Menú fijo con acceso rápido a todas las funciones administrativas
+ * - Diseño compacto y profesional con iconos descriptivos
+ * - Navegación intuitiva hacia módulos de gestión
+ *
+ * Secciones del menú:
+ * - 🏠 Dashboard: Panel principal con estadísticas
+ * - 👨‍⚕️ Doctores: Gestión de médicos y especialidades
+ * - 💉 Especialidades: Administración de servicios médicos
+ * - 📋 Citas: Control de citas médicas agendadas
+ * - 👤 Usuarios: Gestión de usuarios del sistema
+ * - 🚪 Cerrar sesión: Terminación de sesión administrativa
+ *
+ * Características técnicas:
+ * - Posicionamiento fijo (fixed) en lado izquierdo
+ * - Ancho fijo de 220px para consistencia
+ * - Altura completa de la ventana (100%)
+ * - Scroll interno si contenido excede altura
+ *
+ * Estilos CSS incluidos:
+ * - Colores corporativos (#0a1f44 azul oscuro)
+ * - Efectos hover en enlaces
+ * - Tipografía clara y legible
+ * - Diseño responsive (se oculta en móviles si es necesario)
+ *
+ * Inclusión en páginas admin:
+ * - <?php include('sidebar.php'); ?>
+ * - Debe incluirse dentro del <body> antes del contenido principal
+ * - Requiere que las páginas estén en el directorio admin/
+ *
+ * Archivos relacionados:
+ * - Todas las páginas del directorio admin/
+ * - assets/css/style.css (estilos base)
+ * - auth/logout.php (cierre de sesión)
+ *
+ * Seguridad:
+ * - Solo accesible desde páginas con validación de admin
+ * - No incluye validación propia (delega a páginas padre)
+ */
+?>
+
 <!-- admin/sidebar.php -->
 <div class="sidebar">
     <h2>Panel Admin</h2>

@@ -24,6 +24,46 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'doctor') {
 include("../config/db.php");
 
 $id_doctor = $_SESSION['id_usuario'];
+$mensaje = "";
+$error = "";
+
+// Procesar creación de nueva cita
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
+    $accion = $_POST['accion'];
+
+    if ($accion === 'crear_cita') {
+        $id_usuario = $_POST['id_usuario'] ?? '';
+        $id_especialidad = $_POST['id_especialidad'] ?? '';
+        $fecha = $_POST['fecha'] ?? '';
+        $hora = $_POST['hora'] ?? '';
+
+        if (empty($id_usuario) || empty($id_especialidad) || empty($fecha) || empty($hora)) {
+            $error = "Todos los campos son requeridos";
+        } else {
+            // Validar que el usuario existe y es un paciente
+            $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE id = ? AND rol = 'user'");
+            $stmt->execute([$id_usuario]);
+            if (!$stmt->fetch()) {
+                $error = "El paciente seleccionado no existe";
+            } else {
+                try {
+                    // Validar que no exista una cita en el mismo horario
+                    $stmt = $pdo->prepare("SELECT id FROM citas WHERE id_doctor = ? AND fecha = ? AND hora = ? AND estado != 'cancelada'");
+                    $stmt->execute([$id_doctor, $fecha, $hora]);
+                    if ($stmt->fetch()) {
+                        $error = "Ya existe una cita en ese horario";
+                    } else {
+                        $stmt = $pdo->prepare("INSERT INTO citas (id_usuario, id_especialidad, id_doctor, fecha, hora, estado) VALUES (?, ?, ?, ?, ?, 'pendiente')");
+                        $stmt->execute([$id_usuario, $id_especialidad, $id_doctor, $fecha, $hora]);
+                        $mensaje = "Cita creada correctamente.";
+                    }
+                } catch (Exception $e) {
+                    $error = "Error al crear la cita";
+                }
+            }
+        }
+    }
+}
 
 // Procesar cambio de estado de cita
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cita'], $_POST['nuevo_estado'])) {
@@ -41,6 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cita'], $_POST['nu
         $mensaje = "Estado de la cita actualizado correctamente.";
     }
 }
+
+// Obtener lista de pacientes para el formulario
+$stmt = $pdo->prepare("SELECT id, nombre, correo FROM usuarios WHERE rol = 'user' ORDER BY nombre");
+$stmt->execute();
+$pacientes = $stmt->fetchAll();
+
+// Obtener lista de especialidades para el formulario
+$stmt = $pdo->prepare("SELECT id, nombre FROM especialidades ORDER BY nombre");
+$stmt->execute();
+$especialidades = $stmt->fetchAll();
 
 // Obtener filtro
 $filtro = $_GET['filtro'] ?? 'todas';
@@ -245,6 +295,168 @@ $citas = $stmt->fetchAll();
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-nueva-cita {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-nueva-cita:hover {
+            background: #0d7acc;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel,
+        .btn-submit {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-cancel {
+            background: #ddd;
+            color: var(--text);
+        }
+
+        .btn-cancel:hover {
+            background: #ccc;
+        }
+
+        .btn-submit {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-submit:hover {
+            background: #0d7acc;
+        }
+
+        .error {
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -254,8 +466,16 @@ $citas = $stmt->fetchAll();
         <div class="header-section">
             <h1>Mis Citas</h1>
             <?php if (isset($mensaje)): ?>
-                <div class="mensaje"><?php echo htmlspecialchars($mensaje); ?></div>
+                <div class="mensaje">✓ <?php echo htmlspecialchars($mensaje); ?></div>
             <?php endif; ?>
+            <?php if ($error): ?>
+                <div class="error">✗ <?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Botón para crear nueva cita -->
+        <div class="header-actions">
+            <button class="btn-nueva-cita" onclick="abrirModalCita()">+ Nueva Cita</button>
         </div>
 
         <!-- Filtros -->
@@ -325,5 +545,86 @@ $citas = $stmt->fetchAll();
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- Modal para crear nueva cita -->
+    <div id="modalCita" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Cita</h2>
+                <button class="modal-close" onclick="cerrarModalCita()">✕</button>
+            </div>
+
+            <form method="POST">
+                <input type="hidden" name="accion" value="crear_cita">
+
+                <div class="form-group">
+                    <label for="id_usuario">Seleccionar Paciente *</label>
+                    <select id="id_usuario" name="id_usuario" required>
+                        <option value="">-- Seleccionar Paciente --</option>
+                        <?php foreach ($pacientes as $paciente): ?>
+                            <option value="<?php echo $paciente['id']; ?>">
+                                <?php echo htmlspecialchars($paciente['nombre']); ?> (<?php echo htmlspecialchars($paciente['correo']); ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_especialidad">Especialidad *</label>
+                    <select id="id_especialidad" name="id_especialidad" required>
+                        <option value="">-- Seleccionar Especialidad --</option>
+                        <?php foreach ($especialidades as $especialidad): ?>
+                            <option value="<?php echo $especialidad['id']; ?>">
+                                <?php echo htmlspecialchars($especialidad['nombre']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha de la Cita *</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="hora">Hora de la Cita *</label>
+                    <input type="time" id="hora" name="hora" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="cerrarModalCita()">Cancelar</button>
+                    <button type="submit" class="btn-submit">Crear Cita</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalCita() {
+            // Establecer fecha mínima como hoy
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').min = hoy;
+            
+            document.getElementById('modalCita').classList.add('active');
+        }
+
+        function cerrarModalCita() {
+            document.getElementById('modalCita').classList.remove('active');
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('modalCita').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalCita();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarModalCita();
+            }
+        });
+    </script>
 </body>
 </html>

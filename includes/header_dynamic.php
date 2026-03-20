@@ -24,9 +24,8 @@ $es_autenticado = isset($_SESSION['id_usuario']);
     <div class="header-container">
         <!-- Logo -->
         <div class="logo-container">
-            <a href="/Citas-Medicas/index.php" class="logo">
-                <span class="logo-icon">🏥</span>
-                <span class="logo-text">Hospital & Human</span>
+            <a href="/citas_medicas/index.php" class="logo">
+                <img src="/citas_medicas/assets/img/logo.png" alt="Hospital & Human" class="logo-img">
             </a>
         </div>
 
@@ -34,38 +33,38 @@ $es_autenticado = isset($_SESSION['id_usuario']);
         <nav class="nav-menu" id="navMenu">
             <?php if (!$es_autenticado): ?>
                 <!-- Menú para usuarios no autenticados -->
-                <a href="/Citas-Medicas/index.php#especialidades" class="nav-link">Especialidades</a>
-                <a href="/Citas-Medicas/index.php#sucursales" class="nav-link">Sucursales</a>
-                <a href="/Citas-Medicas/auth/login.php" class="nav-link nav-login">Iniciar Sesión</a>
-                <a href="/Citas-Medicas/auth/register.php" class="nav-link nav-register">Registrarse</a>
+                <a href="/citas_medicas/index.php#especialidades" class="nav-link">Especialidades</a>
+                <a href="/citas_medicas/index.php#sucursales" class="nav-link">Sucursales</a>
+                <a href="/citas_medicas/auth/login.php" class="nav-link nav-login">Iniciar Sesión</a>
+                <a href="/citas_medicas/auth/register.php" class="nav-link nav-register">Registrarse</a>
             <?php elseif ($rol === 'admin'): ?>
                 <!-- Menú para administradores -->
-                <a href="/Citas-Medicas/admin/dashboard.php" class="nav-link">Dashboard</a>
-                <a href="/Citas-Medicas/admin/usuarios.php" class="nav-link">Usuarios</a>
-                <a href="/Citas-Medicas/admin/doctores.php" class="nav-link">Doctores</a>
-                <a href="/Citas-Medicas/admin/especialidades.php" class="nav-link">Especialidades</a>
-                <a href="/Citas-Medicas/admin/citas.php" class="nav-link">Citas</a>
+                <a href="/citas_medicas/admin/dashboard.php" class="nav-link">Dashboard</a>
+                <a href="/citas_medicas/admin/usuarios.php" class="nav-link">Usuarios</a>
+                <a href="/citas_medicas/admin/doctores.php" class="nav-link">Doctores</a>
+                <a href="/citas_medicas/admin/especialidades.php" class="nav-link">Especialidades</a>
+                <a href="/citas_medicas/admin/citas.php" class="nav-link">Citas</a>
                 <div class="user-menu">
                     <span class="user-name"><?php echo htmlspecialchars($nombre_usuario); ?></span>
-                    <a href="/Citas-Medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
+                    <a href="/citas_medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
                 </div>
             <?php elseif ($rol === 'doctor'): ?>
                 <!-- Menú para doctores -->
-                <a href="/Citas-Medicas/doctor/dashboard.php" class="nav-link">Mi Panel</a>
-                <a href="/Citas-Medicas/doctor/mis_citas.php" class="nav-link">Mis Citas</a>
-                <a href="/Citas-Medicas/doctor/perfil.php" class="nav-link">Mi Perfil</a>
+                <a href="/citas_medicas/doctor/dashboard.php" class="nav-link">Mi Panel</a>
+                <a href="/citas_medicas/doctor/mis_citas.php" class="nav-link">Mis Citas</a>
+                <a href="/citas_medicas/doctor/perfil.php" class="nav-link">Mi Perfil</a>
                 <div class="user-menu">
                     <span class="user-name"><?php echo htmlspecialchars($nombre_usuario); ?></span>
-                    <a href="/Citas-Medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
+                    <a href="/citas_medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
                 </div>
             <?php elseif ($rol === 'user'): ?>
                 <!-- Menú para usuarios regulares -->
-                <a href="/Citas-Medicas/index.php#especialidades" class="nav-link">Especialidades</a>
-                <a href="/Citas-Medicas/user/mis_citas.php" class="nav-link">Mis Citas</a>
-                <a href="/Citas-Medicas/user/perfil.php" class="nav-link">Mi Perfil</a>
+                <a href="/citas_medicas/index.php#especialidades" class="nav-link">Especialidades</a>
+                <a href="/citas_medicas/user/mis_citas.php" class="nav-link">Mis Citas</a>
+                <a href="/citas_medicas/user/perfil.php" class="nav-link">Mi Perfil</a>
                 <div class="user-menu">
                     <span class="user-name"><?php echo htmlspecialchars($nombre_usuario); ?></span>
-                    <a href="/Citas-Medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
+                    <a href="/citas_medicas/auth/logout.php" class="nav-link nav-logout">Cerrar Sesión</a>
                 </div>
             <?php endif; ?>
         </nav>
@@ -114,7 +113,14 @@ $es_autenticado = isset($_SESSION['id_usuario']);
     }
 
     .logo:hover {
-        color: var(--secondary);
+        opacity: 0.8;
+    }
+
+    .logo-img {
+        height: 50px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
     }
 
     .logo-icon {

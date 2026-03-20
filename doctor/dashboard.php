@@ -23,9 +23,15 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'doctor') {
 
 include("../config/db.php");
 
-// Obtener información del doctor
+// Obtener información del doctor con su especialidad
 $id_doctor = $_SESSION['id_usuario'];
-$stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ? AND rol = 'doctor'");
+$stmt = $pdo->prepare("
+    SELECT u.*, d.id_especialidad, e.nombre as especialidad_nombre, e.descripcion as especialidad_descripcion
+    FROM usuarios u
+    LEFT JOIN doctores d ON d.id_usuario = u.id
+    LEFT JOIN especialidades e ON e.id = d.id_especialidad
+    WHERE u.id = ? AND u.rol = 'doctor'
+");
 $stmt->execute([$id_doctor]);
 $doctor = $stmt->fetch();
 
@@ -218,8 +224,13 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
 
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h1>Bienvenido, Dr. <?php echo htmlspecialchars($doctor['nombre']); ?></h1>
-            <p>Panel de control del doctor - Hospital & Human</p>
+            <h1>👨‍⚕️ Dr. <?php echo htmlspecialchars($doctor['nombre']); ?></h1>
+            <?php if ($doctor['especialidad_nombre']): ?>
+                <p style="color: var(--secondary); font-weight: 600; font-size: 1.1rem;">Especialidad: <?php echo htmlspecialchars($doctor['especialidad_nombre']); ?></p>
+            <?php else: ?>
+                <p style="color: #dc3545; font-style: italic;">⚠️ Sin especialidad asignada</p>
+            <?php endif; ?>
+            <p style="margin-top: 0.5rem;">Panel de control del doctor - Hospital & Human</p>
         </div>
 
         <!-- Estadísticas -->
