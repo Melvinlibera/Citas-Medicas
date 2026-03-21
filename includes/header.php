@@ -54,6 +54,7 @@ session_start();
 <title>Hospital & Human</title>
 
 <link rel="stylesheet" href="/citas_medicas/assets/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
 </head>
 <body>
@@ -61,7 +62,22 @@ session_start();
 <header id="header">
 
     <!-- LOGO INSTITUCIONAL -->
-    <img src="/citas_medicas/assets/img/logo.png" class="logo">
+    <img src="/citas_medicas/assets/img/logo.png" class="logo" onclick="window.location='/citas_medicas/index.php';" style="cursor:pointer;">
+
+    <!-- BOTÓN FLOTANTE DEL MODO OSCURO -->
+    <div id="floatingThemeToggle" class="floating-theme-toggle" title="Cambiar modo claro/oscuro" aria-label="Alternar modo claro y oscuro">
+        <i class="bx bx-sun"></i>
+    </div>
+
+    <!-- CONTROLES DE NAVEGACIÓN RÁPIDA -->
+    <div class="header-controls">
+        <button type="button" class="btn-nav" onclick="history.back();" title="Volver">
+            <i class="bx bx-arrow-back"></i>
+        </button>
+        <a href="/citas_medicas/index.php" class="btn-nav" title="Ir al inicio">
+            <i class="bx bx-home"></i>
+        </a>
+    </div>
 
     <!-- MENÚ DE NAVEGACIÓN ADAPTADO POR ROL -->
     <div class="nav">
@@ -72,6 +88,8 @@ session_start();
 
             <?php if($_SESSION['rol'] == 'admin'): ?>
                 <a href="/citas_medicas/admin/index.php">Admin</a>
+            <?php elseif($_SESSION['rol'] == 'doctor'): ?>
+                <a href="/citas_medicas/doctor/dashboard.php">Mi Panel</a>
             <?php else: ?>
                 <a href="/citas_medicas/user/index.php">Mi Panel</a>
             <?php endif; ?>

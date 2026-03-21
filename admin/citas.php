@@ -145,7 +145,7 @@ border:1px solid #ddd;
                 <td><?= $c['doctor_nombre'] ?></td>
                 <td><?= $c['especialidad_nombre'] ?></td>
                 <td><?= $c['fecha'] ?></td>
-                <td><?= $c['hora'] ?></td>
+                <td><?= date('h:i A', strtotime($c['hora'])) ?></td>
                 <td><?= ucfirst($c['estado']) ?></td>
                 <td>
                     <!-- abre modal -->

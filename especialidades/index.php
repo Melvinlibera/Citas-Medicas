@@ -109,6 +109,8 @@ $especialidades = $stmt->fetchAll();
 
 <body>
 
+<?php include("../includes/floating_theme_toggle.php"); ?>
+
 <div class="container">
 
     <h1>Especialidades Médicas</h1>

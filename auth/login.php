@@ -289,6 +289,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
+<?php include("../includes/floating_theme_toggle.php"); ?>
+
 <div class="login-container">
 
     <form class="login-box" method="POST" onsubmit="return validarLogin()">

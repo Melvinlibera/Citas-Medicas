@@ -24,21 +24,23 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'doctor') {
 include("../config/db.php");
 
 // Obtener información del doctor con su especialidad
-$id_doctor = $_SESSION['id_usuario'];
+$id_usuario = $_SESSION['id_usuario'];
 $stmt = $pdo->prepare("
-    SELECT u.*, d.id_especialidad, e.nombre as especialidad_nombre, e.descripcion as especialidad_descripcion
+    SELECT u.*, d.id as doctor_id, d.id_especialidad, e.nombre as especialidad_nombre, e.descripcion as especialidad_descripcion
     FROM usuarios u
     LEFT JOIN doctores d ON d.id_usuario = u.id
     LEFT JOIN especialidades e ON e.id = d.id_especialidad
     WHERE u.id = ? AND u.rol = 'doctor'
 ");
-$stmt->execute([$id_doctor]);
+$stmt->execute([$id_usuario]);
 $doctor = $stmt->fetch();
 
 if (!$doctor) {
     header("Location: ../auth/login.php");
     exit();
 }
+
+$id_doctor = $doctor['doctor_id']; // ID correcto de la tabla doctores
 
 // Obtener citas de hoy
 $hoy = date('Y-m-d');
@@ -177,10 +179,79 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
             margin-top: 0.5rem;
         }
 
-        .no-citas {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-light);
+        .cita-estado {
+            margin-top: 0.5rem;
+        }
+
+        .estado-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .estado-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .estado-confirmada {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .estado-completada {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .estado-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .cita-acciones {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-accion {
+            padding: 0.375rem 0.75rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-confirmar {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-confirmar:hover {
+            background: #218838;
+        }
+
+        .btn-cancelar {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background: #c82333;
+        }
+
+        .btn-completar {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-completar:hover {
+            background: #0056b3;
         }
 
         .action-buttons {
@@ -262,10 +333,23 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
                     <div class="cita-item">
                         <div class="cita-header">
                             <span class="cita-paciente"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></span>
-                            <span class="cita-hora"><?php echo date('H:i', strtotime($cita['hora'])); ?></span>
+                            <span class="cita-hora"><?php echo date('h:i A', strtotime($cita['hora'])); ?></span>
                         </div>
                         <div class="cita-especialidad">
                             <?php echo htmlspecialchars($cita['especialidad_nombre']); ?>
+                        </div>
+                        <div class="cita-estado">
+                            <span class="estado-badge estado-<?php echo $cita['estado']; ?>">
+                                <?php echo ucfirst($cita['estado']); ?>
+                            </span>
+                        </div>
+                        <div class="cita-acciones">
+                            <?php if ($cita['estado'] === 'pendiente'): ?>
+                                <button onclick="cambiarEstadoCita(<?php echo $cita['id']; ?>, 'confirmada')" class="btn-accion btn-confirmar">Confirmar</button>
+                                <button onclick="cambiarEstadoCita(<?php echo $cita['id']; ?>, 'cancelada')" class="btn-accion btn-cancelar">Cancelar</button>
+                            <?php elseif ($cita['estado'] === 'confirmada'): ?>
+                                <button onclick="cambiarEstadoCita(<?php echo $cita['id']; ?>, 'completada')" class="btn-accion btn-completar">Completar</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -277,5 +361,96 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
             </div>
         </div>
     </div>
+
+    <script>
+        function cambiarEstadoCita(idCita, nuevoEstado) {
+            if (!confirm(`¿Estás seguro de que quieres ${nuevoEstado === 'confirmada' ? 'confirmar' : nuevoEstado === 'cancelada' ? 'cancelar' : 'completar'} esta cita?`)) {
+                return;
+            }
+
+            fetch('../admin/ajax/cambiar_estado_cita.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: idCita,
+                    estado: nuevoEstado
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarNotificacion('Estado de la cita actualizado correctamente', 'success');
+                    // Recargar la página para mostrar los cambios
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    mostrarNotificacion('Error al actualizar el estado de la cita', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error de conexión', 'error');
+            });
+        }
+
+        function mostrarNotificacion(mensaje, tipo = 'info', duracion = 3000) {
+            const notificacion = document.createElement('div');
+            notificacion.className = `notificacion notificacion-${tipo}`;
+            notificacion.textContent = mensaje;
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 9999;
+                animation: slideInRight 0.3s ease-out;
+            `;
+
+            const estilos = {
+                success: { background: '#d4edda', color: '#155724', border: '1px solid #c3e6cb' },
+                error: { background: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb' },
+                warning: { background: '#fff3cd', color: '#856404', border: '1px solid #ffeaa7' },
+                info: { background: '#d1ecf1', color: '#0c5460', border: '1px solid #bee5eb' }
+            };
+
+            const estilo = estilos[tipo] || estilos.info;
+            Object.assign(notificacion.style, estilo);
+
+            document.body.appendChild(notificacion);
+
+            setTimeout(() => {
+                notificacion.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => notificacion.remove(), 300);
+            }, duracion);
+        }
+    </script>
+
+    <style>
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+    </style>
 </body>
 </html>

@@ -162,7 +162,7 @@ table th {
                 <td data-label="Especialidad"><?php echo htmlspecialchars($c['especialidad']); ?></td>
                 <td data-label="Doctor"><?php echo htmlspecialchars($c['doctor']); ?></td>
                 <td data-label="Fecha"><?php echo $c['fecha']; ?></td>
-                <td data-label="Hora"><?php echo $c['hora']; ?></td>
+                <td data-label="Hora"><?php echo date('h:i A', strtotime($c['hora'])); ?></td>
                 <td data-label="Estado">
                     <span class="status <?php echo $c['estado']; ?>">
                         <?php echo ucfirst($c['estado']); ?>

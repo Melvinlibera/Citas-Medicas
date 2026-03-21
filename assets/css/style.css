@@ -18,26 +18,60 @@
     --white: #ffffff;          /* Blanco */
     --text: #222;              /* Texto oscuro */
     --text-light: #555;        /* Texto gris claro */
-    
+
     /* Estados */
     --success: #28a745;        /* Verde - éxito */
     --error: #dc3545;          /* Rojo - error */
     --warning: #ffc107;        /* Amarillo - advertencia */
     --info: #17a2b8;           /* Cian - información */
-    
+
     /* Espaciado y bordes */
     --radius: 14px;            /* Radio de bordes */
     --radius-sm: 8px;          /* Radio pequeño */
-    
+
     /* Transiciones */
     --transition: all 0.3s ease;
     --transition-fast: all 0.15s ease;
     --transition-slow: all 0.5s ease;
-    
+
     /* Sombras */
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
     --shadow-md: 0 8px 25px rgba(0,0,0,0.08);
     --shadow-lg: 0 15px 35px rgba(0,0,0,0.1);
+
+    /* Modo claro/oscuro */
+    --bg-default-light: #fbfbfb;
+    --bg-default-dark: #0f172a;
+    --text-default-light: #222;
+    --text-default-dark: #e2e8f0;
+    --card-light: #ffffff;
+    --card-dark: #1e293b;
+    --border-light: #e2e8f0;
+    --border-dark: #334155;
+}
+
+body.light {
+    --background: var(--bg-default-light);
+    --text: var(--text-default-light);
+    --text-light: #555;
+    --white: #ffffff;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+    --nav-background: #ffffff;
+    --nav-color: #0a1f44;
+}
+
+body.dark {
+    --background: var(--bg-default-dark);
+    --text: var(--text-default-dark);
+    --text-light: #cbd5e1;
+    --white: #0f172a;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.6);
+    --nav-background: #0f172a;
+    --nav-color: #cbd5e1;
 }
 
 /* =========================
@@ -66,6 +100,9 @@ body {
     /* Prevenir márgenes por defecto */
     margin: 0 !important;
     padding: 0 !important;
+    
+    /* Transición suave para cambios de tema */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =========================
@@ -82,7 +119,7 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background: var(--background);
+    background: var(--nav-background, var(--background));
     
     display: flex;
     justify-content: center;
@@ -120,6 +157,145 @@ body {
 /* Logo después de scroll - Se reduce y desplaza */
 #header.scrolled .logo {
     max-width: 75px;
+}
+
+/* CONTROLES DE NAVEGACIÓN RÁPIDA EN ENCABEZADO */
+.header-controls {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.btn-nav,
+.header-controls a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.btn-nav:hover,
+.header-controls a:hover {
+    background: var(--secondary);
+    transform: translateY(-1px);
+}
+
+#header.scrolled .header-controls {
+    left: 20px;
+}
+
+#header.scrolled .btn-nav,
+#header.scrolled .header-controls a {
+    background: var(--white);
+    color: var(--primary);
+}
+
+#header.scrolled .btn-nav:hover,
+#header.scrolled .header-controls a:hover {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+.btn-nav i,
+.header-controls a i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+#themeToggle i {
+    font-size: 20px;
+    transition: transform 0.4s ease, opacity 0.2s ease;
+}
+
+#themeToggle:active i {
+    transform: scale(0.9);
+}
+
+.theme-toggle-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.theme-indicator {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.3s ease;
+    opacity: 0.8;
+}
+
+body.light .theme-indicator {
+    color: #f59e0b; /* Color naranja para modo claro */
+}
+
+/* =========================
+   BOTÓN FLOTANTE DEL TEMA
+========================= */
+
+.floating-theme-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--white);
+    border: 3px solid var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.floating-theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.floating-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+body.dark .floating-theme-toggle {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark .floating-theme-toggle:hover {
+    background: #334155;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .floating-theme-toggle {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
 }
 
 /* =========================
@@ -163,6 +339,29 @@ body {
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
+}
+
+body.dark .nav a {
+    background: #334155;
+    color: var(--text);
+}
+
+body.dark #header.scrolled .nav a {
+    background: var(--white);
+    color: var(--nav-color, var(--primary));
+}
+
+body.dark #header.scrolled .nav a:hover {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+body.dark #header.scrolled .nav span {
+    color: var(--white);
+}
+
+body.dark .logo {
+    filter: brightness(0.95);
 }
 
 .nav a:hover {

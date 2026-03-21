@@ -124,6 +124,9 @@ session_start();
             <?php if($_SESSION['rol'] == 'admin'): ?>
                 <!-- Panel de administrador -->
                 <a href="admin/dashboard.php" title="Acceder al panel de administración">Admin</a>
+            <?php elseif($_SESSION['rol'] == 'doctor'): ?>
+                <!-- Panel de doctor -->
+                <a href="doctor/dashboard.php" title="Acceder a mi panel">Mi Panel</a>
             <?php else: ?>
                 <!-- Panel de usuario -->
                 <a href="user/dashboard.php" title="Acceder a mi panel">Mi Panel</a>
@@ -141,11 +144,13 @@ session_start();
     </div>
 </header>
 
+<?php include("includes/floating_theme_toggle.php"); ?>
+
 <!-- SECCIÓN HERO - BIENVENIDA -->
 <section class="hero">
-    <h1>HOSPITAL & HUMAN</h1>
-    <h2>TU SALUD ES NUESTRA PRIORIDAD</h2>
-    <p style="font-size: 14px; opacity: 0.9; margin-top: 10px;">Medicina de excelencia con trato humano</p>
+    <h1><p style="font-size: 80px; opacity: 0.9; margin-top: 10px;">HOSPITAL & HUMAN</p></h1>
+    <h2><p style="font-size: 30px; opacity: 0.9; margin-top: 10px;">TU SALUD ES NUESTRA PRIORIDAD</p></h2>
+    <p style="font-size: 16px; opacity: 0.9; margin-top: 10px;">Medicina de excelencia con trato humano</p>
 </section>
 
 <!-- SECCIÓN INFORMACIÓN - QUIÉNES SOMOS -->

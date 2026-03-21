@@ -90,7 +90,7 @@ $descuento = round($precio_sin_seguro * 0.75, 2);
         ========================= */
         .especialidad-container {
             min-height: 100vh;
-            padding: 100px 20px 40px 20px;
+            padding: 130px 20px 40px 20px;
             background: var(--background);
         }
 
@@ -399,6 +399,8 @@ $descuento = round($precio_sin_seguro * 0.75, 2);
             <span title="Usuario activo">👤 <?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
             <?php if($_SESSION['rol'] == 'admin'): ?>
                 <a href="../admin/dashboard.php" title="Panel de administración">Admin</a>
+            <?php elseif($_SESSION['rol'] == 'doctor'): ?>
+                <a href="../doctor/dashboard.php" title="Mi panel">Mi Panel</a>
             <?php else: ?>
                 <a href="../user/dashboard.php" title="Mi panel">Mi Panel</a>
             <?php endif; ?>

@@ -354,6 +354,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
+<?php include("../includes/floating_theme_toggle.php"); ?>
+
 <div class="register-container">
 
     <form class="register-box" method="POST" onsubmit="return validarRegistro()">

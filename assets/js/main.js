@@ -109,7 +109,49 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Log de inicialización (solo en desarrollo)
+    // Inicializar modo claro/oscuro
+    const themeToggle = document.getElementById('floatingThemeToggle');
+
+    function applyTheme(theme) {
+        document.body.classList.remove('light', 'dark');
+        document.body.classList.add(theme);
+
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+
+            if (icon) {
+                // Agregar animación de rotación
+                icon.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    icon.className = theme === 'dark' ? 'bx bx-moon' : 'bx bx-sun';
+                    icon.style.transform = 'rotate(0deg)';
+                }, 150);
+            }
+
+            themeToggle.title = theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+            themeToggle.setAttribute('aria-label', themeToggle.title);
+        }
+    }
+
+    function loadTheme() {
+        const storedTheme = window.localStorage.getItem('hnh-theme');
+        const defaultTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : defaultTheme;
+    }
+
+    function setTheme(theme) {
+        applyTheme(theme);
+        window.localStorage.setItem('hnh-theme', theme);
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+    }
+
+    setTheme(loadTheme());
     console.log("Hospital & Human - Sistema de citas médicas inicializado correctamente");
 });
 

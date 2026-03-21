@@ -23,7 +23,17 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'doctor') {
 
 include("../config/db.php");
 
-$id_doctor = $_SESSION['id_usuario'];
+// Obtener el ID del doctor desde la tabla doctores
+$stmt = $pdo->prepare("SELECT id FROM doctores WHERE id_usuario = ?");
+$stmt->execute([$_SESSION['id_usuario']]);
+$doctor = $stmt->fetch();
+
+if (!$doctor) {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$id_doctor = $doctor['id'];
 $mensaje = "";
 $error = "";
 
@@ -205,6 +215,16 @@ $citas = $stmt->fetchAll();
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .paciente-correo {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text-light);
+            font-style: italic;
         }
 
         .cita-detalles {
@@ -464,7 +484,10 @@ $citas = $stmt->fetchAll();
 
     <div class="container">
         <div class="header-section">
-            <h1>Mis Citas</h1>
+            <h1>📋 Mis Citas</h1>
+            <div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">
+                Doctor ID: <?php echo $id_doctor; ?> | Total de citas: <?php echo count($citas); ?>
+            </div>
             <?php if (isset($mensaje)): ?>
                 <div class="mensaje">✓ <?php echo htmlspecialchars($mensaje); ?></div>
             <?php endif; ?>
@@ -498,31 +521,45 @@ $citas = $stmt->fetchAll();
         <div class="citas-list">
             <?php if (empty($citas)): ?>
                 <div class="no-citas">
-                    <p>No hay citas <?php echo $filtro !== 'todas' ? 'con estado ' . htmlspecialchars($filtro) : ''; ?></p>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+                    <h3>No hay citas <?php echo $filtro !== 'todas' ? 'con estado "' . htmlspecialchars($filtro) . '"' : 'programadas'; ?></h3>
+                    <p><?php echo $filtro !== 'todas' ? 'No tienes citas en este estado actualmente.' : 'Cuando tengas citas programadas, aparecerán aquí.'; ?></p>
+                    <?php if ($filtro === 'todas'): ?>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                            💡 Puedes crear una nueva cita usando el botón "Nueva Cita" arriba.
+                        </p>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
                 <?php foreach ($citas as $cita): ?>
                     <div class="cita-card">
                         <div class="cita-header">
                             <div class="cita-info">
-                                <div class="paciente-nombre"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></div>
+                                <div class="paciente-nombre">
+                                    👤 <?php echo htmlspecialchars($cita['paciente_nombre']); ?>
+                                    <span class="paciente-correo">(<?php echo htmlspecialchars($cita['correo']); ?>)</span>
+                                </div>
                                 <div class="cita-detalles">
                                     <div class="detalle-item">
-                                        <span class="detalle-label">Fecha:</span> <?php echo date('d/m/Y', strtotime($cita['fecha'])) . ' ' . date('H:i', strtotime($cita['hora'])); ?>
+                                        <span class="detalle-label">📅 Fecha y Hora:</span>
+                                        <strong><?php echo date('d/m/Y', strtotime($cita['fecha'])) . ' a las ' . date('h:i A', strtotime($cita['hora'])); ?></strong>
                                     </div>
                                     <div class="detalle-item">
-                                        <span class="detalle-label">Especialidad:</span> <?php echo htmlspecialchars($cita['especialidad_nombre']); ?>
+                                        <span class="detalle-label">🏥 Especialidad:</span> <?php echo htmlspecialchars($cita['especialidad_nombre']); ?>
                                     </div>
                                     <div class="detalle-item">
-                                        <span class="detalle-label">Teléfono:</span> <?php echo htmlspecialchars($cita['telefono']); ?>
+                                        <span class="detalle-label">📞 Teléfono:</span> <?php echo htmlspecialchars($cita['telefono'] ?? 'No especificado'); ?>
                                     </div>
                                     <div class="detalle-item">
-                                        <span class="detalle-label">Seguro:</span> <?php echo htmlspecialchars($cita['seguro'] ?? 'Privado'); ?>
+                                        <span class="detalle-label">🛡️ Seguro Médico:</span> <?php echo htmlspecialchars($cita['seguro'] ?? 'Privado'); ?>
+                                    </div>
+                                    <div class="detalle-item">
+                                        <span class="detalle-label">📝 Estado:</span>
+                                        <span class="estado-badge estado-<?php echo $cita['estado']; ?>">
+                                            <?php echo ucfirst($cita['estado']); ?>
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="estado-badge estado-<?php echo $cita['estado']; ?>">
-                                <?php echo ucfirst($cita['estado']); ?>
                             </div>
                         </div>
 
@@ -531,12 +568,12 @@ $citas = $stmt->fetchAll();
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="id_cita" value="<?php echo $cita['id']; ?>">
                                     <input type="hidden" name="nuevo_estado" value="completada">
-                                    <button type="submit" class="btn-action btn-completar">Marcar como Completada</button>
+                                    <button type="submit" class="btn-action btn-completar" onclick="return confirm('¿Marcar esta cita como completada?')">✅ Completar Cita</button>
                                 </form>
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="id_cita" value="<?php echo $cita['id']; ?>">
                                     <input type="hidden" name="nuevo_estado" value="cancelada">
-                                    <button type="submit" class="btn-action btn-cancelar">Cancelar Cita</button>
+                                    <button type="submit" class="btn-action btn-cancelar" onclick="return confirm('¿Cancelar esta cita?')">❌ Cancelar Cita</button>
                                 </form>
                             </div>
                         <?php endif; ?>

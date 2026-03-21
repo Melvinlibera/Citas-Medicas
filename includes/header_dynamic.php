@@ -19,6 +19,12 @@ $rol = $_SESSION['rol'] ?? 'guest';
 $nombre_usuario = $_SESSION['nombre'] ?? 'Usuario';
 $es_autenticado = isset($_SESSION['id_usuario']);
 ?>
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<!-- BOTÓN FLOTANTE DEL MODO OSCURO -->
+<div id="floatingThemeToggle" class="floating-theme-toggle" title="Cambiar modo claro/oscuro" aria-label="Alternar modo claro y oscuro">
+    <i class="bx bx-sun"></i>
+</div>
 
 <header class="header-dynamic" id="headerDynamic">
     <div class="header-container">
@@ -26,6 +32,16 @@ $es_autenticado = isset($_SESSION['id_usuario']);
         <div class="logo-container">
             <a href="/citas_medicas/index.php" class="logo">
                 <img src="/citas_medicas/assets/img/logo.png" alt="Hospital & Human" class="logo-img">
+            </a>
+        </div>
+
+        <!-- Controles de navegación rápida -->
+        <div class="header-controls">
+            <button type="button" class="btn-nav" onclick="history.back();" title="Volver">
+                <i class="bx bx-arrow-back"></i>
+            </button>
+            <a href="/citas_medicas/index.php" class="btn-nav" title="Inicio">
+                <i class="bx bx-home"></i>
             </a>
         </div>
 
@@ -99,6 +115,37 @@ $es_autenticado = isset($_SESSION['id_usuario']);
 
     .logo-container {
         flex-shrink: 0;
+    }
+
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-right: 1rem;
+    }
+
+    .btn-nav {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: var(--white);
+        color: var(--primary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .btn-nav:hover {
+        background: var(--secondary);
+        color: var(--white);
+    }
+
+    .btn-nav i {
+        font-size: 16px;
+        line-height: 1;
     }
 
     .logo {

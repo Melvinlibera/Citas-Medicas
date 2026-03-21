@@ -54,7 +54,7 @@ $citas = $stmt->fetchAll();
 
                     <p><strong>Doctor:</strong> <?php echo $cita['doctor']; ?></p>
                     <p><strong>Fecha:</strong> <?php echo $cita['fecha']; ?></p>
-                    <p><strong>Hora:</strong> <?php echo $cita['hora']; ?></p>
+                    <p><strong>Hora:</strong> <?php echo date('h:i A', strtotime($cita['hora'])); ?></p>
 
                     <!-- BOTÓN ELIMINAR -->
                     <a href="../ajax/eliminar_cita.php?id=<?php echo $cita['id']; ?>" 
