@@ -1,133 +1,200 @@
-HOSPITAL & HUMAN - SISTEMA DE CITAS MÉDICAS
-VERSIÓN 0.8 (BETA FUNCIONAL)
 
-=====================================================
-DESCRIPCIÓN DEL PROYECTO
-=====================================================
-Hospital & Human es una aplicación web desarrollada en PHP y MySQL que permite la gestión de citas médicas de manera eficiente.
+# 🏥 Hospital & Human - Sistema de Citas Médicas
 
-El sistema permite a pacientes registrarse, iniciar sesión, agendar citas médicas y consultar su historial, mientras que los doctores pueden visualizar y gestionar sus citas desde un panel dedicado.
+**Versión:** 0.9.7  
+**Proyecto Final SOF-109** - Práctica de Laboratorio en PHP y MySQL
+---
 
-El proyecto cuenta con una interfaz moderna, responsiva y orientada a una experiencia de usuario clara y profesional.
+## 🗒️ Cambios Realizados (Changelog)
 
-=====================================================
-FUNCIONALIDADES PRINCIPALES
-=====================================================
+### v0.9.7 (marzo 2026)
+- Nueva validación de datos en cliente y servidor (JavaScript y PHP)
+- Mejoras en la seguridad: contraseñas cifradas, prepared statements, control de sesiones y roles
+- CRUD completo para usuarios, doctores, especialidades y citas
+- Implementación de roles diferenciados (admin, doctor, user)
+- Gestión de especialidades médicas y cálculo automático de precios
+- Sistema de citas con estados (pendiente, confirmada, cancelada)
+- Paneles independientes para administrador, doctor y paciente
+- Mejoras visuales y de usabilidad en el frontend
+- Scripts de base de datos y datos de prueba incluidos
+- Documentación técnica y diagrama ER añadidos
+- Corrección de bugs menores y mejoras de rendimiento
 
-PACIENTES:
-- Registro de usuarios
-- Inicio de sesión seguro (uso de contraseñas encriptadas)
-- Agendar citas médicas
-- Selección de especialidad y doctor
-- Visualización de citas agendadas
+---
 
-DOCTORES:
-- Panel de control
-- Visualización de citas asignadas
-- Cambio de estado de citas (pendiente, completada, cancelada)
-- Visualización de datos del paciente
+## 📋 Descripción General
 
-SISTEMA GENERAL:
-- Conexión a base de datos MySQL mediante PDO
-- Validación de datos en formularios
-- Manejo de sesiones
-- Interfaz responsiva (CSS moderno)
-- Animaciones suaves y diseño profesional
+Sistema de gestión de citas médicas desarrollado en PHP y MySQL que permite a pacientes agendar citas con doctores especializados, a doctores gestionar sus citas, y a administradores supervizar todo el sistema.
 
-=====================================================
-TECNOLOGÍAS UTILIZADAS
-=====================================================
-- PHP
-- MySQL
-- HTML5
-- CSS3
-- JavaScript (básico)
+### Características Principales
 
-=====================================================
-ESTRUCTURA DEL PROYECTO
-=====================================================
+- Registro y autenticación de usuarios (pacientes, doctores, administradores)
+- Sistema de roles diferenciado (admin, doctor, user)
+- Gestión de especialidades médicas
+- Cálculo automático de precios (con descuento por seguro)
+- CRUD completo (Crear, Leer, Actualizar, Eliminar)
+- Sistema de citas con estado (pendiente, confirmada, cancelada)
+- Validaciones cliente y servidor (JavaScript + PHP)
+- Contraseñas cifradas con password_hash()
 
-/config
-    db.php (conexión a la base de datos)
+---
 
-/doctor
-    mis_citas.php (panel de citas del doctor)
+## 🛠️ Requisitos Técnicos
 
-/css
-    styles.css (estilos globales)
+- XAMPP (7.4+) o similar
+- PHP 7.4 o superior
+- MySQL 5.7 o superior
+- Navegador web moderno
 
-/img
-    logo.png (logo del sistema)
+### Tecnologías Utilizadas
+- Backend: PHP (PDO)
+- Base de Datos: MySQL
+- Frontend: HTML5, CSS3
+- Validaciones: JavaScript
+- Servidor: Apache (XAMPP)
 
-/ (raíz)
-    index.php (página principal)
-    login.php
-    register.php
-    agendar.php
+---
 
-=====================================================
-BASE DE DATOS
-=====================================================
-Nombre: citas_medicas
+## 📦 Estructura del Proyecto
 
-Tablas principales:
-- usuarios
-- citas
-- especialidades
-- doctores
+```
+citas_medicas/
+├── admin/                      # Panel de administración
+│   ├── ajax/                   # Peticiones AJAX para admin
+│   ├── dashboard.php          
+│   ├── citas.php
+│   ├── usuarios.php
+│   ├── doctores.php
+│   ├── especialidades.php
+│   └── sidebar.php
+├── auth/                       # Autenticación
+│   ├── login.php
+│   ├── register.php
+│   └── logout.php
+├── doctor/                     # Panel del doctor
+│   ├── dashboard.php
+│   ├── mis_citas.php
+│   └── perfil.php
+├── user/                       # Panel del usuario/paciente
+│   ├── index.php
+│   ├── dashboard.php
+│   ├── agendar.php
+│   ├── agendar_ajax.php
+│   ├── mis_citas.php
+│   ├── get_doctores.php
+│   └── perfil.php
+├── config/                     # Configuración
+│   └── db.php                  # Conexión PDO
+├── includes/                   # Componentes reutilizables
+│   ├── header.php
+│   ├── header_dynamic.php
+│   ├── footer.php
+│   └── validaciones_seguros.php
+├── assets/                     # Recursos estáticos
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── script.js
+│   │   └── validaciones.js
+│   └── img/
+│       └── logo.png
+├── database.sql                # Script para crear BD
+├── import.sql                  # Datos de prueba
+└── index.php                   # Página de inicio
+```
 
-Características:
-- Relaciones entre usuarios, doctores y citas
-- Uso de claves primarias y foráneas
-- Campos validados (correo único, etc.)
+---
 
-=====================================================
-INSTALACIÓN
-=====================================================
+## 🚀 Instalación y Ejecución
 
-1. Clonar el repositorio:
-   git clone https://github.com/Melvinlibera/Citas-Medicas.git
+1. Copiar la carpeta `citas_medicas` en `htdocs` de XAMPP
+2. Iniciar XAMPP y levantar Apache y MySQL
+3. Crear la base de datos `citas_medicas` en phpMyAdmin y ejecutar el script `database.sql`
+4. Acceder a `http://localhost/citas_medicas` en el navegador
 
-2. Importar la base de datos:
-   - Abrir phpMyAdmin
-   - Crear base de datos "citas_medicas"
-   - Importar el archivo .sql
+---
 
-3. Configurar la conexión:
-   Editar /config/db.php con tus credenciales:
-   - host
-   - usuario
-   - contraseña
+## 👤 Usuarios de Prueba
 
-4. Ejecutar el proyecto:
-   - Colocar en htdocs (XAMPP) o www (WAMP)
-   - Abrir en navegador: http://localhost/
+- Contraseña para todos: `123456`
+- Administrador: admin@hospitalandhuman.com
+- Doctor: dr.luis@hospitalandhuman.com
+- Paciente: testuser@example.com
 
-=====================================================
-ESTADO ACTUAL (v0.8)
-=====================================================
-- Sistema funcional en entorno local
-- Interfaz mejorada con CSS moderno
-- Panel de doctor operativo
-- Sistema de citas parcialmente optimizado
+---
 
-=====================================================
-PENDIENTES / MEJORAS FUTURAS
-=====================================================
-- Validación avanzada de datos
-- Mejora del sistema de roles
-- Panel de administración completo
-- Notificaciones (correo o sistema interno)
-- Optimización del diseño UI/UX
-- Mejora en seguridad (tokens, protección CSRF)
+## 🔐 Seguridad
 
-=====================================================
-AUTOR
-=====================================================
-Melvin Libera
-Proyecto académico - Sistema de Citas Médicas
+- Contraseñas cifradas (password_hash)
+- Prepared Statements (PDO)
+- Validación de sesiones y roles
+- Sanitización de datos
+- Control de acceso por rol
 
-=====================================================
-NOTAS
-=====================================================
-Este proyecto está en desarrollo y forma parte de un trabajo educativo. No está destinado para uso en producción sin mejoras adicionales de seguridad y escalabilidad.
+---
+
+## 📊 Estructura de Datos
+
+- `usuarios`: id, nombre, cédula, teléfono, correo, password, seguro, rol
+- `especialidades`: id, nombre, descripción, precio
+- `doctores`: id, nombre, id_especialidad, id_usuario
+- `citas`: id, id_usuario, id_especialidad, id_doctor, fecha, hora, estado
+
+---
+
+## 🎯 Funcionalidades por Rol
+
+- **Administrador:** Gestión total de usuarios, doctores, especialidades y citas
+- **Doctor:** Panel personal, gestión de citas propias, edición de perfil
+- **Paciente:** Registro, agendamiento y consulta de citas, edición de perfil
+
+---
+
+## 📝 Validaciones
+
+- Cliente: JavaScript (email, cédula, teléfono, contraseña)
+- Servidor: PHP (campos obligatorios, unicidad, permisos)
+
+---
+
+## 🐛 Solución de Problemas
+
+- Error de base de datos: ejecutar `database.sql`
+- Conexión denegada: verificar MySQL en XAMPP
+- Página en blanco: revisar permisos y configuración en `config/db.php`
+- Contraseña incorrecta: usar `123456`
+
+---
+
+## 📈 Mejoras Futuras
+
+- Envío de correos de confirmación
+- Sistema de calificación de doctores
+- Reportes y estadísticas
+- API REST y recordatorios
+
+---
+
+## 📄 Documentación Adicional
+
+- Diagrama ER: `ERD_DIAGRAM.txt`
+- Documentación técnica: `DOCUMENTACION_TECNICA.md`
+- Script BD: `database.sql`
+
+---
+
+## 👥 Autoría
+
+Hospital & Human Development Team
+Universidad: [Nombre Institución]
+Proyecto: SOF-109 - Práctica de Laboratorio
+Fecha: 2026
+
+---
+
+## 📞 Soporte
+
+Para reportar errores o sugerencias, contactar al equipo de desarrollo.
+
+**Última actualización:** 20 de marzo de 2026
