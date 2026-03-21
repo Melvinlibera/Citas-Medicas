@@ -119,6 +119,7 @@ table th {
     font-weight: bold;
     text-align: center;
     display: inline-block;
+    font-size: 15px;
 }
 
 .status.confirmada { background-color: green; }
@@ -140,7 +141,7 @@ table th {
 }
 </style>
 </head>
-<body>
+<body style="background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%); min-height: 100vh; margin: 0;">
 <script>
     // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
     (function() {
@@ -153,33 +154,38 @@ table th {
 
 <?php include('../includes/floating_theme_toggle.php'); ?>
 
-<div style="margin-bottom: 20px;">
-    <a href="/citas_medicas/user/dashboard.php" class="btn-back" style="display:inline-block;padding:10px 12px;background:#0a1f44;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">&larr; Volver</a>
+<div style="margin-bottom: 20px; margin-top: 30px; text-align: center;">
+    <a href="/citas_medicas/user/dashboard.php" class="btn-back" style="display:inline-block;padding:12px 22px;background:#1e90ff;color:#fff;border-radius:12px;text-decoration:none;font-weight:700;box-shadow:0 2px 12px #1e90ff33;transition:background 0.2s;">&larr; Volver</a>
 </div>
 
-<h2>Mis Citas</h2>
+<h2 style="text-align:center;color:#fff;margin-bottom:30px;font-size:32px;font-weight:800;letter-spacing:1px;text-shadow:0 2px 12px #0a1f44;">Mis Citas</h2>
 
-<div class="table-container">
+<div class="table-container" style="max-width: 950px; margin: auto; background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); padding: 38px 18px; border-radius: 22px; box-shadow: 0 8px 32px #1e90ff22;">
     <?php if(count($citas) > 0): ?>
-    <table>
+    <table style="width:100%;border-collapse:collapse;">
         <thead>
-            <tr>
-                <th>Especialidad</th>
-                <th>Doctor</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Estado</th>
+            <tr style="background: linear-gradient(90deg, #0a1f44 60%, #1e90ff 100%); color: #fff;">
+                <th style="padding:14px 8px;font-size:16px;border-radius:8px 8px 0 0;">Especialidad</th>
+                <th style="padding:14px 8px;font-size:16px;">Doctor</th>
+                <th style="padding:14px 8px;font-size:16px;">Fecha</th>
+                <th style="padding:14px 8px;font-size:16px;">Hora</th>
+                <th style="padding:14px 8px;font-size:16px;">Estado</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach($citas as $c): ?>
-            <tr>
-                <td data-label="Especialidad"><?php echo htmlspecialchars($c['especialidad']); ?></td>
-                <td data-label="Doctor"><?php echo htmlspecialchars($c['doctor']); ?></td>
-                <td data-label="Fecha"><?php echo $c['fecha']; ?></td>
-                <td data-label="Hora"><?php echo date('h:i A', strtotime($c['hora'])); ?></td>
-                <td data-label="Estado">
-                    <span class="status <?php echo $c['estado']; ?>">
+            <tr style="background:rgba(255,255,255,0.85);border-radius:8px;box-shadow:0 2px 8px #1e90ff11;">
+                <td data-label="Especialidad" style="padding:12px 8px;font-size:15px;color:#0a1f44;font-weight:600;"> <?php echo htmlspecialchars($c['especialidad']); ?> </td>
+                <td data-label="Doctor" style="padding:12px 8px;font-size:15px;color:#1e90ff;font-weight:600;"> <?php echo htmlspecialchars($c['doctor']); ?> </td>
+                <td data-label="Fecha" style="padding:12px 8px;font-size:15px;"> <?php echo $c['fecha']; ?> </td>
+                <td data-label="Hora" style="padding:12px 8px;font-size:15px;"> <?php echo date('h:i A', strtotime($c['hora'])); ?> </td>
+                <td data-label="Estado" style="padding:12px 8px;">
+                    <?php
+                        $estado = strtolower($c['estado']);
+                        $badgeColor = $estado === 'confirmada' ? '#28a745' : ($estado === 'pendiente' ? '#ffc107' : '#dc3545');
+                        $textColor = $estado === 'pendiente' ? '#222' : '#fff';
+                    ?>
+                    <span style="padding:7px 18px;border-radius:16px;font-weight:700;font-size:15px;background:<?php echo $badgeColor; ?>;color:<?php echo $textColor; ?>;box-shadow:0 2px 8px #1e90ff22;">
                         <?php echo ucfirst($c['estado']); ?>
                     </span>
                 </td>
@@ -188,7 +194,7 @@ table th {
         </tbody>
     </table>
     <?php else: ?>
-        <p style="text-align:center;">No tienes citas agendadas.</p>
+        <p style="text-align:center;color:#fff;font-size:18px;">No tienes citas agendadas.</p>
     <?php endif; ?>
 </div>
 <script src="../assets/js/main.js" defer></script>

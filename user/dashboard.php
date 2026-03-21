@@ -33,10 +33,22 @@
 session_start();
 
 // Verificar sesión de usuario regular
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['usuario']) || !isset($_SESSION['id_usuario'])){
     header("Location: ../auth/login.php");
     exit();
 }
+
+require_once("../config/db.php");
+
+// Obtener nombre y apellido del usuario
+$id_usuario = $_SESSION['id_usuario'];
+$stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE id = ?");
+$stmt->execute([$id_usuario]);
+$nombre_completo = $stmt->fetchColumn();
+if(!$nombre_completo) {
+    $nombre_completo = $_SESSION['usuario']; // fallback
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -61,15 +73,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(135deg, #0a1f44, #1e90ff);
-    padding: 40px 20px;
+    justify-content: center;
+    padding: 60px 20px 40px 20px;
+    background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%);
 }
 
 /* Logo */
 .dashboard .logo {
-    max-width: 200px;
-    margin-bottom: 40px;
-    transition: transform 0.3s;
+    max-width: 140px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(30,144,255,0.10);
+    border-radius: 24px;
+    animation: scaleIn 1.2s cubic-bezier(.4,2,.6,1) 0.1s both;
 }
 .dashboard .logo:hover {
     transform: scale(1.05);
@@ -80,35 +95,41 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 28px;
 }
 
 /* Tarjetas estilo cascada */
 .card {
-    background: #ffffff;
-    padding: 30px 25px;
-    border-radius: 20px;
-    width: 220px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 20px !important;
+    min-width: 220px;
+    min-height: 140px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid #e3f0ff;
+    box-shadow: 0 8px 32px #1e90ff22;
+    color: #0a1f44;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-weight: 600;
-    color: #0a1f44;
-    text-decoration: none;
+    justify-content: center;
+    text-align: center;
+    animation: scaleIn 0.8s cubic-bezier(.4,2,.6,1) both;
 }
 
 .card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    transform: translateY(-10px) scale(1.04);
+    box-shadow: 0 20px 50px #1e90ff33;
+    background: rgba(255,255,255,0.28) !important;
 }
 
 /* Icono grande dentro de la tarjeta */
 .card span {
-    font-size: 36px;
+    font-size: 40px;
     margin-bottom: 12px;
 }
 
@@ -121,7 +142,17 @@ body {
     .card {
         width: 90%;
         padding: 20px 15px;
+        min-width: unset;
     }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 </style>
 
@@ -138,33 +169,29 @@ body {
     })();
 </script>
 
-<div class="dashboard">
-
-    <!-- Logo de la empresa -->
-    <img src="../assets/img/logo.png" alt="Hospital & Human" class="logo">
-
-    <h1 style="color:white; margin-bottom:30px;">Bienvenido, <?php echo $_SESSION['usuario']; ?></h1>
-
+<div class="dashboard" style="min-height:100vh; background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px 40px 20px;">
+    <img src="../assets/img/logo.png" alt="Hospital & Human" class="logo" style="max-width: 140px; margin-bottom: 30px; box-shadow: 0 8px 32px rgba(30,144,255,0.10); border-radius: 24px; animation: scaleIn 1.2s cubic-bezier(.4,2,.6,1) 0.1s both;">
+    <h1 style="color:#fff; margin-bottom:18px; font-size: 38px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 2px 12px #0a1f44; animation: fadeUp 1s 0.2s both;">¡Bienvenido, <?php echo htmlspecialchars($nombre_completo); ?>!</h1>
+    <h2 style="color:#e2e8f0; font-size: 22px; font-weight: 500; margin-bottom: 38px; animation: fadeUp 1s 0.4s both;">¿Qué deseas hacer hoy?</h2>
     <!-- Contenedor de tarjetas -->
-    <div class="card-container">
-        <a href="agendar.php" class="card">
-            <span>📅</span>
-            Agendar Cita
+    <div class="card-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px;">
+        <a href="agendar.php" class="card" style="background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); border: 1.5px solid #e3f0ff; box-shadow: 0 8px 32px #1e90ff22; color: #0a1f44;">
+            <span style="font-size: 40px;">📅</span>
+            <div style="font-size: 18px; font-weight: 700;">Agendar Cita</div>
         </a>
-        <a href="mis_citas.php" class="card">
-            <span>📋</span>
-            Ver Mis Citas
+        <a href="mis_citas.php" class="card" style="background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); border: 1.5px solid #e3f0ff; box-shadow: 0 8px 32px #1e90ff22; color: #0a1f44;">
+            <span style="font-size: 40px;">📋</span>
+            <div style="font-size: 18px; font-weight: 700;">Ver Mis Citas</div>
         </a>
-        <a href="../index.php" class="card">
-            <span>🏠</span>
-            Inicio
+        <a href="../index.php" class="card" style="background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); border: 1.5px solid #e3f0ff; box-shadow: 0 8px 32px #1e90ff22; color: #0a1f44;">
+            <span style="font-size: 40px;">🏠</span>
+            <div style="font-size: 18px; font-weight: 700;">Inicio</div>
         </a>
-        <a href="../auth/logout.php" class="card">
-            <span>🚪</span>
-            Cerrar Sesión
+        <a href="../auth/logout.php" class="card" style="background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); border: 1.5px solid #e3f0ff; box-shadow: 0 8px 32px #1e90ff22; color: #0a1f44;">
+            <span style="font-size: 40px;">🚪</span>
+            <div style="font-size: 18px; font-weight: 700;">Cerrar Sesión</div>
         </a>
     </div>
-
 </div>
 <script src="../assets/js/main.js" defer></script>
 </body>

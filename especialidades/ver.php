@@ -392,8 +392,8 @@ $descuento = round($precio_sin_seguro * 0.75, 2);
 <body>
 
 <!-- HEADER -->
-<header id="header">
-    <img src="../assets/img/logo.png" alt="Hospital & Human" class="logo">
+<header id="header" style="background: linear-gradient(90deg, #0a1f44 60%, #1e90ff 100%); box-shadow: 0 2px 16px rgba(30,144,255,0.08);">
+    <img src="../assets/img/logo.png" alt="Hospital & Human" class="logo" style="max-width: 90px; margin: 10px 0 10px 20px; filter: drop-shadow(0 2px 8px #1e90ff33);">
     <div class="nav">
         <?php if(isset($_SESSION['usuario'])): ?>
             <span title="Usuario activo">👤 <?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
@@ -413,101 +413,73 @@ $descuento = round($precio_sin_seguro * 0.75, 2);
 </header>
 
 <!-- CONTENEDOR PRINCIPAL -->
-<div class="especialidad-container">
-    <div class="especialidad-box">
-        
+<div class="especialidad-container" style="background: linear-gradient(135deg, #e3f0ff 60%, #f8fafc 100%);">
+    <div class="especialidad-box" style="box-shadow: 0 8px 32px rgba(30,144,255,0.10);">
         <!-- HEADER DE ESPECIALIDAD -->
-        <div class="especialidad-header">
-            <h1><?php echo htmlspecialchars($esp['nombre']); ?></h1>
-            <p>Especialidad Médica de Excelencia</p>
+        <div class="especialidad-header" style="background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%); box-shadow: 0 4px 24px #0a1f4422;">
+            <h1 style="font-size: 40px; font-weight: 800; letter-spacing: 1px; color: #fff; margin-bottom: 10px; text-shadow: 0 2px 12px #0a1f44; animation: fadeUp 1s 0.2s both;">
+                <?php echo htmlspecialchars($esp['nombre']); ?>
+            </h1>
+            <p style="font-size: 18px; color: #e2e8f0; font-weight: 500; margin: 0; animation: fadeUp 1s 0.4s both;">Especialidad Médica de Excelencia</p>
         </div>
-
         <!-- CONTENIDO -->
         <div class="especialidad-content">
-            
             <!-- DESCRIPCIÓN -->
-            <div class="descripcion">
-                <p><?php echo htmlspecialchars($esp['descripcion']); ?></p>
+            <div class="descripcion" style="border-bottom: 2px solid #e3f0ff;">
+                <p style="font-size: 17px; color: #555; line-height: 1.8; animation: fadeUp 1s 0.6s both;">
+                    <?php echo htmlspecialchars($esp['descripcion']); ?>
+                </p>
             </div>
-
             <!-- SECCIÓN DE PRECIOS -->
-            <div class="precios-section">
-                <h3>💰 Información de Precios</h3>
+            <div class="precios-section" style="background: #f8f9fa; border-radius: 18px; box-shadow: 0 2px 12px #1e90ff11;">
+                <h3 style="color: #0a1f44; font-weight: 700; font-size: 22px; margin-bottom: 25px;">💰 Información de Precios</h3>
                 <div class="precios-grid">
-                    <div class="precio-card">
+                    <div class="precio-card" style="box-shadow: 0 2px 8px #1e90ff11;">
                         <h4>Sin Seguro Médico</h4>
-                        <div class="monto"><?php echo number_format($precio_sin_seguro, 2); ?></div>
+                        <div class="monto" style="font-size: 32px; font-weight: 700; color: #dc3545; margin-bottom: 5px;"><?php echo number_format($precio_sin_seguro, 2); ?></div>
                         <div class="moneda">RD$ (Pesos Dominicanos)</div>
+                        <span class="descuento-badge" style="background: #dc3545;">Precio regular</span>
                     </div>
-                    <div class="precio-card">
+                    <div class="precio-card" style="box-shadow: 0 2px 8px #1e90ff11;">
                         <h4>Con Seguro Médico</h4>
-                        <div class="monto"><?php echo number_format($precio_con_seguro, 2); ?></div>
+                        <div class="monto" style="font-size: 32px; font-weight: 700; color: #28a745; margin-bottom: 5px;"><?php echo number_format($precio_con_seguro, 2); ?></div>
                         <div class="moneda">RD$ (Pesos Dominicanos)</div>
-                        <div class="descuento-badge">
-                            ✓ Ahorra <?php echo number_format($descuento, 2); ?> RD$
-                        </div>
+                        <span class="descuento-badge" style="background: #28a745;">Ahorra RD$<?php echo number_format($descuento, 2); ?> (75%)</span>
                     </div>
                 </div>
             </div>
-
             <!-- SECCIÓN DE DOCTORES -->
             <div class="doctores-section">
-                <h3>👨‍⚕️ Médicos Especialistas Disponibles</h3>
-                
-                <?php if(count($doctores) > 0): ?>
-                    <div class="doctores-grid">
-                        <?php foreach($doctores as $doctor): ?>
-                            <div class="doctor-card">
-                                <div>
-                                    <div class="doctor-icon">👨‍⚕️</div>
-                                    <h4><?php echo htmlspecialchars($doctor['nombre']); ?></h4>
-                                    <span class="especialidad-badge"><?php echo htmlspecialchars($esp['nombre']); ?></span>
-                                    
-                                    <?php if($doctor['correo'] || $doctor['telefono']): ?>
-                                        <div class="contacto">
-                                            <?php if($doctor['correo']): ?>
-                                                <div>📧 <a href="mailto:<?php echo htmlspecialchars($doctor['correo']); ?>">
-                                                    <?php echo htmlspecialchars($doctor['correo']); ?>
-                                                </a></div>
-                                            <?php endif; ?>
-                                            <?php if($doctor['telefono']): ?>
-                                                <div>📞 <?php echo htmlspecialchars($doctor['telefono']); ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <div class="disponibilidad">✓ Disponible</div>
+                <h3 style="color: #0a1f44; font-weight: 700; font-size: 22px; margin-bottom: 25px;">👨‍⚕️ Doctores Disponibles</h3>
+                <div class="doctores-grid">
+                    <?php if(count($doctores) > 0): ?>
+                        <?php foreach($doctores as $doc): ?>
+                            <div class="doctor-card" style="box-shadow: 0 2px 8px #1e90ff11; animation: scaleIn 0.8s cubic-bezier(.4,2,.6,1) both;">
+                                <div class="doctor-icon">👨‍⚕️</div>
+                                <h4><?php echo htmlspecialchars($doc['nombre']); ?></h4>
+                                <div class="especialidad-badge">Especialista</div>
+                                <div class="contacto">
+                                    <span>📧 <a href="mailto:<?php echo htmlspecialchars($doc['correo']); ?>"><?php echo htmlspecialchars($doc['correo']); ?></a></span><br>
+                                    <span>📞 <?php echo htmlspecialchars($doc['telefono']); ?></span>
                                 </div>
-
+                                <div class="disponibilidad">Disponible para agendar</div>
                                 <?php if(isset($_SESSION['usuario'])): ?>
-                                    <a href="../user/agendar.php?doctor=<?php echo $doctor['id']; ?>&especialidad=<?php echo $id; ?>" class="btn">
-                                        📅 Agendar Cita
-                                    </a>
+                                    <a href="../user/agendar.php?id_doctor=<?php echo $doc['id']; ?>&id_especialidad=<?php echo $id; ?>" class="btn">Agendar Cita</a>
                                 <?php else: ?>
-                                    <a href="../auth/register.php" class="btn login-btn">
-                                        🔐 Registrarse para Agendar
-                                    </a>
+                                    <a href="../auth/login.php" class="btn login-btn">Iniciar Sesión para Agendar</a>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="no-doctores">
-                        <p>No hay doctores disponibles en esta especialidad en este momento.</p>
-                        <a href="../index.php" class="btn-volver">← Volver al inicio</a>
-                    </div>
-                <?php endif; ?>
+                    <?php else: ?>
+                        <div class="no-doctores">
+                            <p>No hay doctores disponibles para esta especialidad en este momento.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
-
+            <a href="../index.php" class="btn-volver" style="margin-top: 40px;">← Volver al inicio</a>
         </div>
-
     </div>
-
-    <!-- BOTÓN DE VOLVER -->
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="../index.php" class="btn-volver">← Volver a Especialidades</a>
-    </div>
-
 </div>
 
 <!-- SCRIPTS -->

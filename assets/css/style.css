@@ -319,15 +319,15 @@ body {
 
 /* Header después de scroll - Efecto de transformación */
 #header.scrolled {
-    justify-content: space-between;
-    padding: 10px 30px;
+    justify-content: center; /* Mantener centrado */
+    padding: 10px 0; /* Padding uniforme */
     background: var(--primary);
     box-shadow: var(--shadow-md);
 }
 
 /* Logo después de scroll - Se reduce y desplaza */
 #header.scrolled .logo {
-    max-width: 75px;
+    max-width: 110px; /* No reducir el logo al hacer scroll */
 }
 
 /* CONTROLES DE NAVEGACIÓN RÁPIDA EN ENCABEZADO */

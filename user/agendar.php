@@ -98,37 +98,40 @@ try {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%);
             padding: 20px;
-            margin-top: 60px;
+            margin-top: 0;
         }
 
         /* =========================
            CAJA DE AGENDAMIENTO
         ========================= */
         .agendar-box {
-            background: white;
-            padding: 40px;
-            border-radius: var(--radius);
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px #1e90ff22;
+            border-radius: 28px;
+            max-width: 480px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.5s ease-out;
+            padding: 44px 28px;
         }
 
         .agendar-box h2 {
             margin-bottom: 10px;
-            color: var(--primary);
-            font-size: 28px;
-            font-weight: 700;
+            color: #0a1f44;
+            font-size: 32px;
+            font-weight: 800;
             text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 12px #0a1f44;
         }
 
         .agendar-box .subtitle {
             text-align: center;
-            color: var(--text-light);
-            font-size: 14px;
-            margin-bottom: 25px;
+            color: #1e90ff;
+            font-size: 16px;
+            margin-bottom: 28px;
+            font-weight: 500;
         }
 
         /* =========================
@@ -169,25 +172,29 @@ try {
            MENSAJES
         ========================= */
         .error {
-            color: #721c24;
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 12px 15px;
-            border-radius: var(--radius-sm);
+            color: #dc3545;
+            background: #fff0f3;
+            border: 1.5px solid #dc3545;
+            padding: 14px 18px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
             animation: slideDown 0.3s ease-out;
+            text-align:center;
         }
 
         .success {
-            color: #155724;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 12px 15px;
-            border-radius: var(--radius-sm);
+            color: #28a745;
+            background: #e6f9ed;
+            border: 1.5px solid #28a745;
+            padding: 14px 18px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
             animation: slideDown 0.3s ease-out;
+            text-align:center;
         }
 
         /* =========================
@@ -195,17 +202,18 @@ try {
         ========================= */
         .agendar-box button {
             width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
+            padding: 14px;
+            background: #1e90ff;
+            color: #fff;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: 12px;
             cursor: pointer;
             margin-top: 10px;
-            transition: var(--transition);
-            font-size: 14px;
-            font-weight: 600;
+            transition: background 0.2s;
+            font-size: 16px;
+            font-weight: 700;
             text-transform: uppercase;
+            box-shadow: 0 2px 12px #1e90ff33;
         }
 
         .agendar-box button:hover {
@@ -222,17 +230,16 @@ try {
            ENLACE DE VOLVER
         ========================= */
         .volver-link {
-            margin-top: 20px;
+            margin-top: 28px;
             text-align: center;
-            font-size: 14px;
-            color: var(--text-light);
+            font-size: 15px;
         }
 
         .volver-link a {
-            color: var(--secondary);
+            color: #1e90ff;
             text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
+            font-weight: 700;
+            transition: color 0.2s;
         }
 
         .volver-link a:hover {
@@ -279,7 +286,7 @@ try {
         }
     </style>
 </head>
-<body>
+<body style="background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%); min-height: 100vh; margin: 0;">
 <script>
     // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
     (function() {
@@ -290,25 +297,21 @@ try {
     })();
 </script>
 
-<div class="agendar-container">
-    <div class="agendar-box">
-        <h2>📅 Agendar Cita</h2>
-        <p class="subtitle">Selecciona los detalles de tu cita médica</p>
-
+<div class="agendar-container" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #0a1f44 60%, #1e90ff 100%); padding: 20px; margin-top: 0;">
+    <div class="agendar-box" style="background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); box-shadow: 0 8px 32px #1e90ff22; border-radius: 28px; max-width: 480px; width: 100%; padding: 44px 28px;">
+        <h2 style="margin-bottom: 10px; color: #0a1f44; font-size: 32px; font-weight: 800; text-align: center; letter-spacing: 1px; text-shadow: 0 2px 12px #0a1f44;">📅 Agendar Cita</h2>
+        <p class="subtitle" style="text-align: center; color: #1e90ff; font-size: 16px; margin-bottom: 28px; font-weight: 500;">Selecciona los detalles de tu cita médica</p>
         <?php if($error): ?>
-            <div class="error">⚠️ <?php echo htmlspecialchars($error); ?></div>
+            <div class="error" style="color: #dc3545; background: #fff0f3; border: 1.5px solid #dc3545; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 15px; font-weight: 600; animation: slideDown 0.3s ease-out; text-align:center;">❌ <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-
         <?php if($success): ?>
-            <div class="success">✓ <?php echo htmlspecialchars($success); ?></div>
+            <div class="success" style="color: #28a745; background: #e6f9ed; border: 1.5px solid #28a745; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 15px; font-weight: 600; animation: slideDown 0.3s ease-out; text-align:center;">✅ <?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
-
         <form method="POST" onsubmit="return validarAgendamiento()">
-            
             <!-- Especialidad -->
             <div class="form-group">
                 <label for="especialidad">Especialidad *</label>
-                <select name="especialidad" id="especialidad" required>
+                <select name="especialidad" id="especialidad" required style="background:rgba(255,255,255,0.7);border:1.5px solid #1e90ff;">
                     <option value="">Selecciona una especialidad</option>
                     <?php foreach($especialidades as $esp): ?>
                         <option value="<?php echo $esp['id']; ?>" <?php echo ($especialidad_preseleccionada == $esp['id']) ? 'selected' : ''; ?>>
@@ -317,37 +320,30 @@ try {
                     <?php endforeach; ?>
                 </select>
             </div>
-
             <!-- Doctor -->
             <div class="form-group">
                 <label for="doctor">Médico Especialista *</label>
-                <select name="doctor" id="doctor" required>
+                <select name="doctor" id="doctor" required style="background:rgba(255,255,255,0.7);border:1.5px solid #1e90ff;">
                     <option value="">Selecciona un médico</option>
                 </select>
             </div>
-
             <!-- Fecha -->
             <div class="form-group">
                 <label for="fecha">Fecha de la Cita *</label>
-                <input type="date" name="fecha" id="fecha" required>
+                <input type="date" name="fecha" id="fecha" required style="background:rgba(255,255,255,0.7);border:1.5px solid #1e90ff;">
             </div>
-
             <!-- Hora -->
             <div class="form-group">
                 <label for="hora">Hora de la Cita *</label>
-                <input type="time" name="hora" id="hora" required>
+                <input type="time" name="hora" id="hora" required style="background:rgba(255,255,255,0.7);border:1.5px solid #1e90ff;">
             </div>
-
             <!-- Botón de envío -->
-            <button type="submit">Agendar Cita</button>
-
+            <button type="submit" style="width:100%;padding:14px;background:#1e90ff;color:#fff;border:none;border-radius:12px;cursor:pointer;margin-top:10px;transition:background 0.2s;font-size:16px;font-weight:700;text-transform:uppercase;box-shadow:0 2px 12px #1e90ff33;">Agendar Cita</button>
         </form>
-
         <!-- Volver -->
-        <div class="volver-link">
-            <a href="../index.php">← Volver al inicio</a>
+        <div class="volver-link" style="margin-top: 28px; text-align: center; font-size: 15px;">
+            <a href="../index.php" style="color: #1e90ff; text-decoration: none; font-weight: 700; transition: color 0.2s;">← Volver al inicio</a>
         </div>
-
     </div>
 </div>
 
