@@ -480,6 +480,15 @@ $citas = $stmt->fetchAll();
     </style>
 </head>
 <body>
+    <script>
+        // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
+        (function() {
+            const storedTheme = localStorage.getItem('hnh-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+            document.body.classList.add(theme);
+        })();
+    </script>
     <?php include("../includes/header_dynamic.php"); ?>
 
     <div class="container">

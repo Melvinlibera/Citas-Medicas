@@ -60,18 +60,167 @@ body.light {
     --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
     --nav-background: #ffffff;
     --nav-color: #0a1f44;
+    /* Colores adicionales para claridad */
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --input-text: #222;
+    --label-text: #0a1f44;
+    --button-bg: #ffffff;
+    --button-border: #0a1f44;
 }
 
 body.dark {
     --background: var(--bg-default-dark);
     --text: var(--text-default-dark);
     --text-light: #cbd5e1;
-    --white: #0f172a;
+    --white: #ffffff;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.6);
     --nav-background: #0f172a;
     --nav-color: #cbd5e1;
+    /* Colores adicionales para mejor contraste */
+    --input-bg: #1e293b;
+    --input-border: #334155;
+    --input-text: #e2e8f0;
+    --label-text: #cbd5e1;
+    --button-bg: #0f172a;
+    --button-border: #334155;
+}
+
+/* =========================
+   ESTILOS ESPECÍFICOS PARA MODO OSCURO
+========================= */
+
+/* Inputs, selects y textareas en modo oscuro */
+body.dark input,
+body.dark select,
+body.dark textarea {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+    color: #94a3b8;
+}
+
+body.dark input:focus,
+body.dark select:focus,
+body.dark textarea:focus {
+    border-color: var(--secondary);
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
+}
+
+/* Labels en modo oscuro */
+body.dark label {
+    color: var(--label-text);
+}
+
+/* Botones y elementos interactivos en modo oscuro */
+body.dark button,
+body.dark .btn {
+    background-color: var(--button-bg);
+    color: var(--text);
+    border: 2px solid var(--button-border);
+}
+
+body.dark button:hover,
+body.dark .btn:hover {
+    background-color: var(--input-bg);
+}
+
+/* Tables en modo oscuro */
+body.dark table {
+    background-color: var(--card-dark);
+    color: var(--text);
+}
+
+body.dark thead {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark tbody tr {
+    border-bottom: 1px solid var(--input-border);
+}
+
+body.dark tbody tr:hover {
+    background-color: #1e293b;
+}
+
+body.dark td {
+    color: var(--text);
+}
+
+/* Cards en modo oscuro */
+body.dark .card {
+    background-color: var(--card-dark);
+    color: var(--text);
+    border-color: var(--input-border);
+}
+
+body.dark .container {
+    background-color: var(--background);
+}
+
+/* Modales en modo oscuro */
+body.dark .modal-content {
+    background-color: var(--card-dark);
+    color: var(--text);
+}
+
+body.dark .modal-header {
+    border-bottom-color: var(--input-border);
+}
+
+body.dark .modal-close {
+    color: var(--text);
+}
+
+body.dark .modal-close:hover {
+    color: var(--secondary);
+}
+
+/* Formularios en modo oscuro */
+body.dark .form-group label {
+    color: var(--label-text);
+}
+
+/* Notificaciones y alertas */
+body.dark .alert,
+body.dark .mensaje,
+body.dark .error {
+    background-color: var(--input-bg);
+    color: var(--text);
+    border-color: var(--input-border);
+}
+
+body.dark .alert-success {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #86efac;
+    border-color: #22c55e;
+}
+
+body.dark .alert-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border-color: #ef4444;
+}
+
+body.dark .alert-warning {
+    background-color: rgba(234, 179, 8, 0.1);
+    color: #fef08a;
+    border-color: #eab308;
+}
+
+body.dark .alert-info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #93c5fd;
+    border-color: #3b82f6;
 }
 
 /* =========================

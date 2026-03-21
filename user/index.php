@@ -76,4 +76,5 @@ $citas = $stmt->fetchAll();
 
 </div>
 
+<script src="../assets/js/main.js" defer></script>
 <?php include("../includes/footer.php"); ?>

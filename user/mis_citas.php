@@ -141,6 +141,15 @@ table th {
 </style>
 </head>
 <body>
+<script>
+    // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
+    (function() {
+        const storedTheme = localStorage.getItem('hnh-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        document.body.classList.add(theme);
+    })();
+</script>
 
 <h2>Mis Citas</h2>
 
@@ -176,6 +185,6 @@ table th {
         <p style="text-align:center;">No tienes citas agendadas.</p>
     <?php endif; ?>
 </div>
-
+<script src="../assets/js/main.js" defer></script>
 </body>
 </html>

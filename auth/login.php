@@ -288,6 +288,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+<script>
+    // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
+    (function() {
+        const storedTheme = localStorage.getItem('hnh-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        document.body.classList.add(theme);
+    })();
+</script>
 
 <?php include("../includes/floating_theme_toggle.php"); ?>
 
@@ -349,6 +358,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- Scripts -->
 <script src="../assets/js/validaciones.js" defer></script>
+<script src="../assets/js/main.js" defer></script>
 
 </body>
 </html>

@@ -288,9 +288,93 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
         .btn-secondary:hover {
             background: #0d7acc;
         }
+
+        /* ========================= 
+           MODO OSCURO - DASHBOARD
+        ========================= */
+        
+        body.dark .stat-card {
+            background: var(--card-dark);
+            color: var(--text);
+        }
+
+        body.dark .stat-card h3 {
+            color: var(--text-light);
+        }
+
+        body.dark .stat-card .number {
+            color: var(--secondary);
+        }
+
+        body.dark .citas-section {
+            background: var(--card-dark);
+            color: var(--text);
+        }
+
+        body.dark .citas-section h2 {
+            color: var(--text);
+            border-bottom-color: var(--secondary);
+        }
+
+        body.dark .cita-item {
+            background: #1e293b;
+            color: var(--text);
+            border-left-color: var(--secondary);
+        }
+
+        body.dark .cita-item:hover {
+            background: #334155;
+        }
+
+        body.dark .cita-Header {
+            color: var(--text);
+        }
+
+        body.dark .cita-paciente {
+            color: var(--secondary);
+        }
+
+        body.dark .cita-hora,
+        body.dark .cita-especialidad {
+            color: var(--text-light);
+        }
+
+        body.dark .no-citas {
+            color: var(--text);
+        }
+
+        body.dark .no-citas p {
+            color: var(--text-light);
+        }
+
+        body.dark .dashboard-header p:first-of-type {
+            color: var(--secondary);
+        }
+
+        body.dark .dashboard-header p:last-of-type {
+            color: var(--text-light);
+        }
+
+        /* Estilos párrafo con estilo inline */
+        body.dark p {
+            color: var(--text);
+        }
+
+        body.dark p[style*="color: var(--secondary)"] {
+            color: var(--secondary) !important;
+        }
     </style>
 </head>
 <body>
+    <script>
+        // Aplicar tema INMEDIATAMENTE antes de renderizar el contenido
+        (function() {
+            const storedTheme = localStorage.getItem('hnh-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+            document.body.classList.add(theme);
+        })();
+    </script>
     <?php include("../includes/header_dynamic.php"); ?>
 
     <div class="dashboard-container">
@@ -417,6 +501,14 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
                 info: { background: '#d1ecf1', color: '#0c5460', border: '1px solid #bee5eb' }
             };
 
+            // Ajustar estilos según el tema
+            if (document.body.classList.contains('dark')) {
+                estilos.success = { background: 'rgba(34, 197, 94, 0.1)', color: '#86efac', border: '1px solid #22c55e' };
+                estilos.error = { background: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', border: '1px solid #ef4444' };
+                estilos.warning = { background: 'rgba(234, 179, 8, 0.1)', color: '#fef08a', border: '1px solid #eab308' };
+                estilos.info = { background: 'rgba(59, 130, 246, 0.1)', color: '#93c5fd', border: '1px solid #3b82f6' };
+            }
+
             const estilo = estilos[tipo] || estilos.info;
             Object.assign(notificacion.style, estilo);
 
@@ -452,5 +544,6 @@ $citas_pendientes = $stmt->fetch()['pendientes'];
             }
         }
     </style>
+    <script src="../assets/js/main.js" defer></script>
 </body>
 </html>
