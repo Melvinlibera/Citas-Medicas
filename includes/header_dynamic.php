@@ -21,11 +21,6 @@ $es_autenticado = isset($_SESSION['id_usuario']);
 ?>
 <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-<!-- BOTÓN FLOTANTE DEL MODO OSCURO -->
-<div id="floatingThemeToggle" class="floating-theme-toggle" title="Cambiar modo claro/oscuro" aria-label="Alternar modo claro y oscuro">
-    <i class="bx bx-sun"></i>
-</div>
-
 <header class="header-dynamic" id="headerDynamic">
     <div class="header-container">
         <!-- Logo -->

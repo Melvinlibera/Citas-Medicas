@@ -65,8 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if($user && password_verify($password, $user['password'])){
 
                 // Contraseña correcta - crear sesión
-                $_SESSION['usuario'] = $user['nombre'];
-                $_SESSION['nombre'] = $user['nombre'];
+                $_SESSION['usuario'] = $user['correo'];
+                $_SESSION['nombre'] = trim($user['nombre'] . ' ' . $user['apellido']);
                 $_SESSION['rol'] = $user['rol'];
                 $_SESSION['id_usuario'] = $user['id'];
                 $_SESSION['id'] = $user['id'];
@@ -104,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Iniciar Sesión - Hospital & Human</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
     <style>
         /* =========================
@@ -330,13 +331,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Contraseña -->
         <div class="form-group">
             <label for="password">Contraseña</label>
-            <input 
-                type="password" 
-                id="password"
-                name="password" 
-                placeholder="Tu contraseña" 
-                required
-            >
+            <div class="password-field">
+                <input 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    placeholder="Tu contraseña" 
+                    required
+                >
+                <button type="button" class="eye-btn" onclick="togglePassword('password')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+            </div>
         </div>
 
         <!-- Botón de envío -->
@@ -359,6 +363,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!-- Scripts -->
 <script src="../assets/js/validaciones.js" defer></script>
 <script src="../assets/js/main.js" defer></script>
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        field.type = field.type === 'password' ? 'text' : 'password';
+
+        const btn = field.parentElement.querySelector('.eye-btn');
+        if (btn) {
+            btn.innerHTML = field.type === 'password' ? "<i class='bx bx-hide'></i>" : "<i class='bx bx-show'></i>";
+        }
+    }
+</script>
 
 </body>
 </html>

@@ -151,6 +151,12 @@ table th {
     })();
 </script>
 
+<?php include('../includes/floating_theme_toggle.php'); ?>
+
+<div style="margin-bottom: 20px;">
+    <a href="/citas_medicas/user/dashboard.php" class="btn-back" style="display:inline-block;padding:10px 12px;background:#0a1f44;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">&larr; Volver</a>
+</div>
+
 <h2>Mis Citas</h2>
 
 <div class="table-container">

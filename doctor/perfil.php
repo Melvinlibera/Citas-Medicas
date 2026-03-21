@@ -307,54 +307,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
                 </div>
             </div>
 
-            <form method="POST">
-                <input type="hidden" name="accion" value="actualizar_perfil">
-
-                <div class="form-group">
-                    <label for="nombre">Nombre Completo</label>
-                    <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($doctor['nombre']); ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="cedula">Cédula</label>
-                    <input type="text" id="cedula" name="cedula" value="<?php echo htmlspecialchars($doctor['cedula'] ?? ''); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono" value="<?php echo htmlspecialchars($doctor['telefono'] ?? ''); ?>">
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                </div>
-            </form>
+            <div class="info-box">
+            <div class="info-item"><span class="info-label">Nombre Completo:</span> <span class="info-value"><?php echo htmlspecialchars($doctor['nombre']); ?></span></div>
+            <div class="info-item"><span class="info-label">Cédula:</span> <span class="info-value"><?php echo htmlspecialchars($doctor['cedula'] ?? 'No disponible'); ?></span></div>
+            <div class="info-item"><span class="info-label">Teléfono:</span> <span class="info-value"><?php echo htmlspecialchars($doctor['telefono'] ?? 'No disponible'); ?></span></div>
+            <div class="info-item"><span class="info-label">Correo:</span> <span class="info-value"><?php echo htmlspecialchars($doctor['correo']); ?></span></div>
+            <div class="info-item"><span class="info-label">Especialidad:</span> <span class="info-value"><?php echo $doctor['especialidad_nombre'] ? htmlspecialchars($doctor['especialidad_nombre']) : '<span style="color: #dc3545; font-style: italic;">Sin especialidad asignada</span>'; ?></span></div>
+        </div>
         </div>
 
         <!-- Tab: Seguridad -->
         <div id="seguridad" class="tab-content">
-            <form method="POST">
-                <input type="hidden" name="accion" value="cambiar_password">
-
-                <div class="form-group">
-                    <label for="password_actual">Contraseña Actual</label>
-                    <input type="password" id="password_actual" name="password_actual" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password_nueva">Nueva Contraseña</label>
-                    <input type="password" id="password_nueva" name="password_nueva" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password_confirmar">Confirmar Nueva Contraseña</label>
-                    <input type="password" id="password_confirmar" name="password_confirmar" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
-                </div>
-            </form>
+            <div class="info-box">
+                <p>Su perfil solo puede visualizarse aquí. Para cambiar contraseña o datos, contacte con el administrador.</p>
+            </div>
         </div>
     </div>
 

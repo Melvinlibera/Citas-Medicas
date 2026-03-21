@@ -49,8 +49,10 @@ if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
 // Traer doctores con información de especialidad
 // IMPORTANTE: JOIN con especialidades para mostrar nombre de especialidad
 $stmt = $pdo->query("
-    SELECT d.id, d.nombre AS doctor, d.id_especialidad, e.nombre AS especialidad
+    SELECT d.id, d.nombre AS doctor, d.id_especialidad, e.nombre AS especialidad,
+           u.cedula, u.telefono, u.correo, u.genero, u.rol
     FROM doctores d
+    LEFT JOIN usuarios u ON u.id = d.id_usuario
     LEFT JOIN especialidades e ON d.id_especialidad = e.id
 ");
 $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -105,6 +107,45 @@ input, select{
     border-radius:8px;
     border:1px solid #ddd;
 }
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 40px;
+}
+
+.form-row {
+    display:flex;
+    gap:10px;
+}
+
+.form-row input {
+    width:100%;
+}
+
+.eye-btn {
+    position:absolute;
+    top:50%;
+    right:10px;
+    transform:translateY(-50%);
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    font-size:16px;
+    color:#0a1f44;
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+}
+
+.eye-btn:hover{
+    color:#1e90ff;
+}
 </style>
 </head>
 
@@ -121,16 +162,35 @@ input, select{
         <table>
             <tr>
                 <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Género</th>
+                <th>Rol</th>
                 <th>Especialidad</th>
                 <th>Acciones</th>
             </tr>
 
             <?php foreach($doctores as $d): ?>
             <tr>
-                <td><?= $d['doctor'] ?></td>
-                <td><?= $d['especialidad'] ?></td>
+                <td><?= htmlspecialchars($d['doctor']) ?></td>
+                <td><?= htmlspecialchars($d['cedula'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($d['telefono'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($d['correo'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($d['genero'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($d['rol'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($d['especialidad'] ?? '-') ?></td>
                 <td>
-                    <button onclick="abrirModalEdit(<?= $d['id'] ?>, '<?= $d['doctor'] ?>', <?= $d['id_especialidad'] ?>)">Editar</button>
+                    <button onclick="abrirModalEdit(
+                        <?= $d['id'] ?>,
+                        '<?= addslashes($d['doctor']) ?>',
+                        '<?= addslashes($d['cedula'] ?? '') ?>',
+                        '<?= addslashes($d['telefono'] ?? '') ?>',
+                        '<?= addslashes($d['correo'] ?? '') ?>',
+                        '<?= addslashes($d['genero'] ?? '') ?>',
+                        '<?= addslashes($d['rol'] ?? '') ?>',
+                        <?= $d['id_especialidad'] ?>
+                    )">Editar</button>
                     <button onclick="eliminarDoctor(<?= $d['id'] ?>)">Eliminar</button>
                 </td>
             </tr>
@@ -146,9 +206,34 @@ input, select{
         <h3>Agregar Doctor</h3>
 
         <form id="formAddDoctor">
-            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <div class="form-row">
+                <input type="text" name="nombre" placeholder="Nombre" required>
+                <input type="text" name="apellido" placeholder="Apellido" required>
+            </div>
             <input type="text" name="cedula" placeholder="Cédula (XXX-XXXXXXX-X)" required>
-            <input type="email" name="correo" placeholder="Correo electrónico" required>            <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+            <input type="tel" name="telefono" placeholder="Teléfono (10 dígitos)" required>
+            <input type="email" name="correo" placeholder="Correo electrónico" required>
+            <select name="genero" required>
+                <option value="">Selecciona Género</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+            <select name="rol" required>
+                <option value="">Selecciona Rol</option>
+                <option value="user">Usuario</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+            </select>
+            <div class="form-row">
+                <div class="password-field">
+                    <input type="password" name="password" id="addDoctorPassword" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                    <button type="button" class="eye-btn" onclick="togglePassword('addDoctorPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+                </div>
+                <div class="password-field">
+                    <input type="password" name="confirm_password" id="addDoctorConfirmPassword" placeholder="Confirmar contraseña" required>
+                    <button type="button" class="eye-btn" onclick="togglePassword('addDoctorConfirmPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+                </div>
+            </div>
             <select name="id_especialidad" required>
                 <option value="">Selecciona Especialidad</option>
                 <?php
@@ -172,9 +257,24 @@ input, select{
 
         <form id="formEditDoctor">
             <input type="hidden" name="id" id="editId">
-
-            <input type="text" name="nombre" id="editNombre" required>
-
+            <div class="form-row">
+                <input type="text" name="nombre" id="editNombre" placeholder="Nombre" required>
+                <input type="text" name="apellido" id="editApellido" placeholder="Apellido" required>
+            </div>
+            <input type="text" name="cedula" id="editCedula" placeholder="Cédula (XXX-XXXXXXX-X)" required>
+            <input type="tel" name="telefono" id="editTelefono" placeholder="Teléfono (10 dígitos)" required>
+            <input type="email" name="correo" id="editCorreo" placeholder="Correo electrónico" required>
+            <select name="genero" id="editGenero" required>
+                <option value="">Selecciona Género</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+            <select name="rol" id="editRol" required>
+                <option value="">Selecciona Rol</option>
+                <option value="user">Usuario</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+            </select>
             <select name="id_especialidad" id="editEspecialidad" required>
                 <option value="">Selecciona Especialidad</option>
                 <?php
@@ -184,7 +284,16 @@ input, select{
                 }
                 ?>
             </select>
-
+            <div class="form-row">
+                <div class="password-field">
+                    <input type="password" name="password" id="editDoctorPassword" placeholder="Nueva contraseña (opcional)">
+                    <button type="button" class="eye-btn" onclick="togglePassword('editDoctorPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+                </div>
+                <div class="password-field">
+                    <input type="password" name="confirm_password" id="editDoctorConfirmPassword" placeholder="Confirmar contraseña">
+                    <button type="button" class="eye-btn" onclick="togglePassword('editDoctorConfirmPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+                </div>
+            </div>
             <button type="submit">Guardar cambios</button>
         </form>
     </div>
@@ -197,20 +306,48 @@ input, select{
 function abrirModalAdd(){ document.getElementById('modalAdd').style.display='flex'; }
 function cerrarModalAdd(){ document.getElementById('modalAdd').style.display='none'; }
 
-function abrirModalEdit(id,nombre,idEsp){
+function abrirModalEdit(id, nombreCompleto, cedula, telefono, correo, genero, rol, idEsp){
+    const parts = nombreCompleto.trim().split(' ');
+    const apellido = parts.length > 1 ? parts.slice(1).join(' ') : '';
+    const nombre = parts[0] || '';
+
     document.getElementById('editId').value = id;
     document.getElementById('editNombre').value = nombre;
+    document.getElementById('editApellido').value = apellido;
+    document.getElementById('editCedula').value = cedula;
+    document.getElementById('editTelefono').value = telefono;
+    document.getElementById('editCorreo').value = correo;
+    document.getElementById('editGenero').value = genero;
+    document.getElementById('editRol').value = rol;
     document.getElementById('editEspecialidad').value = idEsp;
     document.getElementById('modalEdit').style.display='flex';
 }
 function cerrarModalEdit(){ document.getElementById('modalEdit').style.display='none'; }
 
+function togglePassword(inputId){
+    const input = document.getElementById(inputId);
+    const btn = input.nextElementSibling;
+    if(!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.innerHTML = input.type === 'password' ? "<i class='bx bx-hide'></i>" : "<i class='bx bx-show'></i>";
+}
+
 // AGREGAR
 document.getElementById('formAddDoctor').addEventListener('submit', function(e){
     e.preventDefault();
-    const form = new FormData(this);
+    const password = this.password.value;
+    const confirmPassword = this.confirm_password.value;
 
-    axios.post('../ajax/agregar_doctor.php', form)
+    if(password !== confirmPassword){
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    const form = new FormData(this);
+    const fullName = `${form.get('nombre').trim()} ${form.get('apellido').trim()}`.trim();
+    form.set('nombre', fullName);
+
+    axios.post('ajax/agregar_doctor.php', form)
     .then(res=>{
         alert(res.data.message);
         location.reload();
@@ -220,9 +357,19 @@ document.getElementById('formAddDoctor').addEventListener('submit', function(e){
 // EDITAR
 document.getElementById('formEditDoctor').addEventListener('submit', function(e){
     e.preventDefault();
-    const form = new FormData(this);
+    const password = this.password.value;
+    const confirmPassword = this.confirm_password.value;
 
-    axios.post('../ajax/editar_doctor.php', form)
+    if(password && password !== confirmPassword){
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    const form = new FormData(this);
+    const fullName = `${form.get('nombre').trim()} ${form.get('apellido').trim()}`.trim();
+    form.set('nombre', fullName);
+
+    axios.post('ajax/editar_doctor.php', form)
     .then(res=>{
         alert(res.data.message);
         location.reload();
@@ -232,7 +379,7 @@ document.getElementById('formEditDoctor').addEventListener('submit', function(e)
 // ELIMINAR
 function eliminarDoctor(id){
     if(confirm("¿Eliminar este doctor?")){
-        axios.post('../ajax/eliminar_doctor.php',{id:id})
+        axios.post('ajax/eliminar_doctor.php',{id:id})
         .then(res=>{
             alert(res.data.message);
             location.reload();

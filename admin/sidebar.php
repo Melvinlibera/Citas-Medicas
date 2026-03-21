@@ -93,3 +93,7 @@
     background: #1e90ff;
 }
 </style>
+
+<?php if (!defined('NO_THEME_TOGGLE')): ?>
+    <?php include_once('../includes/floating_theme_toggle.php'); ?>
+<?php endif; ?>

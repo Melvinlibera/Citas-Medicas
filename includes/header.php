@@ -64,11 +64,6 @@ session_start();
     <!-- LOGO INSTITUCIONAL -->
     <img src="/citas_medicas/assets/img/logo.png" class="logo" onclick="window.location='/citas_medicas/index.php';" style="cursor:pointer;">
 
-    <!-- BOTÓN FLOTANTE DEL MODO OSCURO -->
-    <div id="floatingThemeToggle" class="floating-theme-toggle" title="Cambiar modo claro/oscuro" aria-label="Alternar modo claro y oscuro">
-        <i class="bx bx-sun"></i>
-    </div>
-
     <!-- CONTROLES DE NAVEGACIÓN RÁPIDA -->
     <div class="header-controls">
         <button type="button" class="btn-nav" onclick="history.back();" title="Volver">

@@ -16,6 +16,9 @@ try {
     if(
         empty($_POST['id']) ||
         empty($_POST['nombre']) ||
+        empty($_POST['apellido']) ||
+        empty($_POST['genero']) ||
+        empty($_POST['seguro']) ||
         empty($_POST['cedula']) ||
         empty($_POST['telefono']) ||
         empty($_POST['correo']) ||
@@ -25,12 +28,20 @@ try {
     }
 
     $id = $_POST['id'];
-    $nombre = $_POST['nombre'];
+    $nombre = trim($_POST['nombre']);
+    $apellido = trim($_POST['apellido']);
+    $genero = $_POST['genero'];
+    $seguro = trim($_POST['seguro']);
     $cedula = $_POST['cedula'];
     $telefono = $_POST['telefono'];
     $correo = $_POST['correo'];
     $rol = $_POST['rol'];
     $password = $_POST['password'] ?? null;
+    $confirm_password = $_POST['confirm_password'] ?? null;
+
+    if($password && $password !== $confirm_password){
+        throw new Exception("Las contraseñas no coinciden");
+    }
 
     // ============================
     // VALIDACIÓN: Formato cédula (10 dígitos)
@@ -54,27 +65,29 @@ try {
     $cedula_formateada = substr($cedula_limpia, 0, 3) . '-' . substr($cedula_limpia, 3, 7) . '-' . substr($cedula_limpia, 10, 1);
     $telefono_formateado = substr($telefono_limpio, 0, 3) . '-' . substr($telefono_limpio, 3, 3) . '-' . substr($telefono_limpio, 6, 4);
 
+    $nombreCompleto = trim($nombre . ' ' . $apellido);
+
     // SI VIENE PASSWORD → ACTUALIZA TODO
     if(!empty($password)){
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $pdo->prepare("
             UPDATE usuarios 
-            SET nombre=?, cedula=?, telefono=?, correo=?, password=?, rol=? 
+            SET nombre=?, apellido=?, genero=?, seguro=?, cedula=?, telefono=?, correo=?, password=?, rol=? 
             WHERE id=?
         ");
 
-        $stmt->execute([$nombre,$cedula_formateada,$telefono_formateado,$correo,$passwordHash,$rol,$id]);
+        $stmt->execute([$nombre,$apellido,$genero,$seguro,$cedula_formateada,$telefono_formateado,$correo,$passwordHash,$rol,$id]);
 
     } else {
         // SIN PASSWORD
         $stmt = $pdo->prepare("
             UPDATE usuarios 
-            SET nombre=?, cedula=?, telefono=?, correo=?, rol=? 
+            SET nombre=?, apellido=?, genero=?, seguro=?, cedula=?, telefono=?, correo=?, rol=? 
             WHERE id=?
         ");
 
-        $stmt->execute([$nombre,$cedula_formateada,$telefono_formateado,$correo,$rol,$id]);
+        $stmt->execute([$nombre,$apellido,$genero,$seguro,$cedula_formateada,$telefono_formateado,$correo,$rol,$id]);
     }
 
     echo json_encode([

@@ -150,7 +150,7 @@ session_start();
 <section class="hero">
     <h1><p style="font-size: 80px; opacity: 0.9; margin-top: 10px;">HOSPITAL & HUMAN</p></h1>
     <h2><p style="font-size: 30px; opacity: 0.9; margin-top: 10px;">TU SALUD ES NUESTRA PRIORIDAD</p></h2>
-    <p style="font-size: 16px; opacity: 0.9; margin-top: 10px;">Medicina de excelencia con trato humano</p>
+    <h3><p style="font-size: 18px; opacity: 0.9; margin-top: 10px;">Medicina de excelencia con trato humano</p></h3>
 </section>
 
 <!-- SECCIÓN INFORMACIÓN - QUIÉNES SOMOS -->

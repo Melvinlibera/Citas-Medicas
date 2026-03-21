@@ -60,12 +60,21 @@ try {
     // VALIDAR CAMPOS OBLIGATORIOS
     if(
         empty($_POST['nombre']) ||
+        empty($_POST['apellido']) ||
         empty($_POST['cedula']) ||
+        empty($_POST['telefono']) ||
         empty($_POST['correo']) ||
+        empty($_POST['genero']) ||
+        empty($_POST['rol']) ||
         empty($_POST['password']) ||
+        empty($_POST['confirm_password']) ||
         empty($_POST['id_especialidad'])
     ){
         throw new Exception("Todos los campos son obligatorios");
+    }
+
+    if($_POST['password'] !== $_POST['confirm_password']){
+        throw new Exception("Las contraseñas no coinciden");
     }
 
     // Validar formatos
@@ -73,8 +82,16 @@ try {
         throw new Exception("Formato de correo inválido");
     }
 
-    if(strlen($_POST['password']) < 6){
-        throw new Exception("La contraseña debe tener mínimo 6 caracteres");
+    if(!preg_match('/^\d{10}$/', preg_replace('/[^0-9]/', '', $_POST['telefono']))){
+        throw new Exception("Teléfono inválido (debe tener 10 dígitos)");
+    }
+
+    if(!in_array($_POST['genero'], ['masculino', 'femenino'])){
+        throw new Exception("Género inválido");
+    }
+
+    if(!in_array($_POST['rol'], ['user', 'doctor', 'admin'])){
+        throw new Exception("Rol inválido");
     }
 
     // Validar que especialidad existe
@@ -93,17 +110,25 @@ try {
 
     $pdo->beginTransaction();
 
+    $nombreCompleto = trim($_POST['nombre']) . ' ' . trim($_POST['apellido']);
+    $telefono = preg_replace('/[^0-9]/', '', $_POST['telefono']);
+    $telefonoFormateado = substr($telefono,0,3) . '-' . substr($telefono,3,3) . '-' . substr($telefono,6,4);
+
     // 1. CREAR USUARIO
     $stmt = $pdo->prepare("
-        INSERT INTO usuarios (nombre, cedula, correo, password, rol)
-        VALUES (?, ?, ?, ?, 'doctor')
+        INSERT INTO usuarios (nombre, apellido, cedula, telefono, correo, password, genero, rol)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->execute([
-        $_POST['nombre'],
+        trim($_POST['nombre']),
+        trim($_POST['apellido']),
         $_POST['cedula'],
+        $telefonoFormateado,
         $_POST['correo'],
-        password_hash($_POST['password'], PASSWORD_DEFAULT)
+        password_hash($_POST['password'], PASSWORD_DEFAULT),
+        $_POST['genero'],
+        $_POST['rol']
     ]);
 
     $id_usuario = $pdo->lastInsertId();
@@ -115,7 +140,7 @@ try {
     ");
 
     $stmt->execute([
-        $_POST['nombre'],
+        $nombreCompleto,
         $_POST['id_especialidad'],
         $id_usuario
     ]);

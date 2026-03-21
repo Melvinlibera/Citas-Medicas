@@ -98,15 +98,15 @@ function setTheme(theme) {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    let currentTheme = loadTheme();
+    setTheme(currentTheme);
+
     const themeToggle = document.getElementById('floatingThemeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const current = document.body.classList.contains('dark') ? 'dark' : 'light';
-            setTheme(current === 'dark' ? 'light' : 'dark');
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(currentTheme);
         });
     }
-
-    // Aplicar el tema guardado
-    setTheme(loadTheme());
 });
 </script>

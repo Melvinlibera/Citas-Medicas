@@ -146,8 +146,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const current = document.body.classList.contains('dark') ? 'dark' : 'light';
-            setTheme(current === 'dark' ? 'light' : 'dark');
+            const current = loadTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
         });
     }
 

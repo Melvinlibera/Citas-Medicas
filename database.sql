@@ -50,12 +50,14 @@ USE `citas_medicas`;
 -- =====================================================================
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
   `cedula` varchar(20) UNIQUE DEFAULT NULL,
   `telefono` varchar(20) DEFAULT NULL,
   `correo` varchar(100) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
   `seguro` varchar(50) DEFAULT NULL,
+  `genero` enum('masculino','femenino') DEFAULT NULL,
   `rol` varchar(20) DEFAULT 'user',
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -150,26 +152,39 @@ CREATE TABLE `citas` (
 -- Contraseña de prueba: "123456" (cifrada con password_hash)
 -- Hash: $2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.
 
-INSERT INTO `usuarios` (`id`, `nombre`, `cedula`, `telefono`, `correo`, `password`, `seguro`, `rol`, `fecha_registro`) VALUES
+-- =====================================================================
+-- INSERTAR USUARIOS (Doctores y Pacientes)
+-- =====================================================================
+-- Contraseña de prueba: "123456" (cifrada con password_hash)
+-- Hash: $2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.
+
+INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `cedula`, `telefono`, `correo`, `password`, `seguro`, `genero`, `rol`, `fecha_registro`) VALUES
 -- Admin
-(1, 'Admin Principal', '0000000000', '0000000000', 'admin@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'si', 'admin', NOW()),
+(1, 'Admin', 'Principal', '000-0000000-0', '000-000-0000', 'admin@hospitalandhuman.com', '$2y$10$YNn1M.i07nfNeoKHO8WOoOKvqtuwO8ykClQ8uDlnfsiVxSDtjaKfq', NULL, 'masculino', 'admin', NOW()),
 
 -- Doctores
-(2, 'Dr. Luis Fernández', '001-1234567-1', '809-555-1234', 'dr.luis@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(3, 'Dra. Carmen Rodríguez', '402-7654321-8', '829-234-5678', 'dra.carmen@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(4, 'Dr. José Martínez', '031-9876543-2', '849-345-6789', 'dr.jose@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(5, 'Dra. Laura Gómez', '223-4567890-5', '809-456-7890', 'dra.laura@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(6, 'Dr. Ricardo Sánchez', '054-1122334-6', '829-567-8901', 'dr.ricardo@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(7, 'Dra. Patricia Díaz', '402-9988776-3', '849-678-9012', 'dra.patricia@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(8, 'Dr. Manuel Herrera', '001-3344556-7', '809-789-0123', 'dr.manuel@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(9, 'Dra. Andrea Castillo', '031-2233445-9', '829-890-1234', 'dra.andrea@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(10, 'Dr. Javier Morales', '402-5566778-4', '849-901-2345', 'dr.javier@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(11, 'Dra. Daniela Ruiz', '054-7788990-2', '809-112-2334', 'dra.daniela@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(12, 'Dr. Fernando Navarro', '223-8899001-6', '829-223-3445', 'dr.fernando@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(13, 'Dra. Sofía Méndez', '001-6677889-3', '849-334-4556', 'dra.sofia@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(14, 'Dr. Alberto Cruz', '031-4455667-8', '809-445-5667', 'dr.alberto@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(15, 'Dra. Valeria Peña', '402-1231231-5', '829-556-6778', 'dra.valeria@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW()),
-(16, 'Dr. Miguel Ortega', '054-3213213-7', '849-667-7889', 'dr.miguel@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'doctor', NOW());
+(2, 'Luis', 'Fernández', '001-1234567-1', '809-555-1234', 'dr.luis@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(3, 'Carmen', 'Rodríguez', '402-7654321-8', '829-234-5678', 'dra.carmen@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(4, 'José', 'Martínez', '031-9876543-2', '849-345-6789', 'dr.jose@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(5, 'Laura', 'Gómez', '223-4567890-5', '809-456-7890', 'dra.laura@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(6, 'Ricardo', 'Sánchez', '054-1122334-6', '829-567-8901', 'dr.ricardo@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(7, 'Patricia', 'Díaz', '402-9988776-3', '849-678-9012', 'dra.patricia@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(8, 'Manuel', 'Herrera', '001-3344556-7', '809-789-0123', 'dr.manuel@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(9, 'Andrea', 'Castillo', '031-2233445-9', '829-890-1234', 'dra.andrea@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(10, 'Javier', 'Morales', '402-5566778-4', '849-901-2345', 'dr.javier@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(11, 'Daniela', 'Ruiz', '054-7788990-2', '809-112-2334', 'dra.daniela@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(12, 'Fernando', 'Navarro', '223-8899001-6', '829-223-3445', 'dr.fernando@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(13, 'Sofía', 'Méndez', '001-6677889-3', '849-334-4556', 'dra.sofia@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(14, 'Alberto', 'Cruz', '031-4455667-8', '809-445-5667', 'dr.alberto@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+(15, 'Valeria', 'Peña', '402-1231231-5', '829-556-6778', 'dra.valeria@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'femenino', 'doctor', NOW()),
+(16, 'Miguel', 'Ortega', '054-3213213-7', '849-667-7889', 'dr.miguel@hospitalandhuman.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', NULL, 'masculino', 'doctor', NOW()),
+
+-- Pacientes de ejemplo
+(17, 'Juan', 'Pérez', '402-3610138-8', '849-350-9603', 'juan.perez@email.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'ARS Palic', 'masculino', 'user', NOW()),
+(18, 'María', 'García', '001-2345678-9', '809-123-4567', 'maria.garcia@email.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'privado', 'femenino', 'user', NOW()),
+(19, 'Carlos', 'López', '031-3456789-0', '829-234-5678', 'carlos.lopez@email.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'ARS Humano', 'masculino', 'user', NOW()),
+(20, 'Ana', 'Martínez', '223-4567890-1', '849-345-6789', 'ana.martinez@email.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'ARS Universal', 'femenino', 'user', NOW()),
+(21, 'Pedro', 'Sánchez', '054-5678901-2', '809-456-7890', 'pedro.sanchez@email.com', '$2y$12$dprrmAro02bLkqoY2qcImuzBQOqMx0753bfllw5S1pQ0UCanDD2h.', 'privado', 'masculino', 'user', NOW());
 
 -- =====================================================================
 -- INSERTAR ESPECIALIDADES

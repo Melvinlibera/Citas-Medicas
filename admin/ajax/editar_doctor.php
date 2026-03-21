@@ -21,13 +21,34 @@ if(!isset($_SESSION['usuario']) || $_SESSION['rol'] != 'admin'){
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $id = $_POST['id'] ?? null;
-    $nombre = $_POST['nombre'] ?? null;
-    $cedula = $_POST['cedula'] ?? null;
-    $correo = $_POST['correo'] ?? null;
+    $nombre = trim($_POST['nombre'] ?? '');
+    $apellido = trim($_POST['apellido'] ?? '');
+    $cedula = trim($_POST['cedula'] ?? '');
+    $telefono = trim($_POST['telefono'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $genero = $_POST['genero'] ?? null;
+    $rol = $_POST['rol'] ?? null;
     $id_especialidad = $_POST['id_especialidad'] ?? null;
+    $password = $_POST['password'] ?? null;
+    $confirm_password = $_POST['confirm_password'] ?? null;
 
-    if(!$id || !$nombre || !$cedula || !$correo || !$id_especialidad){
+    if(!$id || !$nombre || !$apellido || !$cedula || !$telefono || !$correo || !$genero || !$rol || !$id_especialidad){
         echo json_encode(['status'=>'error','message'=>'Todos los campos son obligatorios']);
+        exit;
+    }
+
+    if($password && $password !== $confirm_password){
+        echo json_encode(['status'=>'error','message'=>'Las contraseñas no coinciden']);
+        exit;
+    }
+
+    if(!in_array($genero, ['masculino', 'femenino'])){
+        echo json_encode(['status'=>'error','message'=>'Género inválido']);
+        exit;
+    }
+
+    if(!in_array($rol, ['user', 'doctor', 'admin'])){
+        echo json_encode(['status'=>'error','message'=>'Rol inválido']);
         exit;
     }
 
@@ -45,14 +66,27 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         }
 
         $id_usuario = $doctor['id_usuario'];
+        $nombreCompleto = trim($nombre . ' ' . $apellido);
+        $telefono_limpio = preg_replace('/[^0-9]/', '', $telefono);
+        $telefonoFormateado = substr($telefono_limpio, 0, 3) . '-' . substr($telefono_limpio, 3, 3) . '-' . substr($telefono_limpio, 6, 4);
 
         // 2. ACTUALIZAR USUARIO
-        $stmt = $pdo->prepare("
-            UPDATE usuarios 
-            SET nombre=?, cedula=?, correo=? 
-            WHERE id=?
-        ");
-        $stmt->execute([$nombre, $cedula, $correo, $id_usuario]);
+        if(!empty($password)){
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("
+                UPDATE usuarios 
+                SET nombre=?, apellido=?, cedula=?, telefono=?, correo=?, genero=?, rol=?, password=? 
+                WHERE id=?
+            ");
+            $stmt->execute([$nombre, $apellido, $cedula, $telefonoFormateado, $correo, $genero, $rol, $passwordHash, $id_usuario]);
+        } else {
+            $stmt = $pdo->prepare("
+                UPDATE usuarios 
+                SET nombre=?, apellido=?, cedula=?, telefono=?, correo=?, genero=?, rol=? 
+                WHERE id=?
+            ");
+            $stmt->execute([$nombre, $apellido, $cedula, $telefonoFormateado, $correo, $genero, $rol, $id_usuario]);
+        }
 
         // 3. ACTUALIZAR DOCTOR
         $stmt = $pdo->prepare("
@@ -60,7 +94,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             SET nombre=?, id_especialidad=? 
             WHERE id=?
         ");
-        $stmt->execute([$nombre, $id_especialidad, $id]);
+        $stmt->execute([$nombreCompleto, $id_especialidad, $id]);
 
         $pdo->commit();
 

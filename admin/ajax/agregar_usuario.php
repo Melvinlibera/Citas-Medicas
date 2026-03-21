@@ -28,13 +28,21 @@ try {
     // ============================
     if(
         empty($_POST['nombre']) ||
+        empty($_POST['apellido']) ||
+        empty($_POST['genero']) ||
+        empty($_POST['seguro']) ||
         empty($_POST['cedula']) ||
         empty($_POST['telefono']) ||
         empty($_POST['correo']) ||
         empty($_POST['password']) ||
+        empty($_POST['confirm_password']) ||
         empty($_POST['rol'])
     ){
         throw new Exception("Todos los campos son obligatorios");
+    }
+
+    if($_POST['password'] !== $_POST['confirm_password']){
+        throw new Exception("Las contraseñas no coinciden");
     }
 
     // ============================
@@ -80,18 +88,25 @@ try {
     // ============================
     $cedula_formateada = substr($cedula_limpia, 0, 3) . '-' . substr($cedula_limpia, 3, 7) . '-' . substr($cedula_limpia, 10, 1);
     $telefono_formateado = substr($telefono_limpio, 0, 3) . '-' . substr($telefono_limpio, 3, 3) . '-' . substr($telefono_limpio, 6, 4);
+    $nombre = trim($_POST['nombre']);
+    $apellido = trim($_POST['apellido']);
+    $genero = $_POST['genero'];
+    $seguro = trim($_POST['seguro']);
 
     // PREPARAR QUERY
     $stmt = $pdo->prepare("INSERT INTO usuarios 
-        (nombre, cedula, telefono, correo, password, rol) 
-        VALUES (?, ?, ?, ?, ?, ?)");
+        (nombre, apellido, cedula, telefono, correo, password, seguro, genero, rol) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     $stmt->execute([
-        $_POST['nombre'],
+        $nombre,
+        $apellido,
         $cedula_formateada,
         $telefono_formateado,
         $_POST['correo'],
         password_hash($_POST['password'], PASSWORD_DEFAULT),
+        $seguro,
+        $genero,
         $_POST['rol']
     ]);
 

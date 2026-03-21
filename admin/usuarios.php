@@ -49,6 +49,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <title>Gestionar Usuarios - Admin</title>
 <link rel="stylesheet" href="../assets/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
 <style>
 .main{margin-left:220px; padding:40px 30px;}
@@ -89,6 +90,45 @@ margin:10px 0;
 border-radius:8px;
 border:1px solid #ddd;
 }
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 40px;
+}
+
+.form-row {
+    display:flex;
+    gap:10px;
+}
+
+.form-row input {
+    width:100%;
+}
+
+.eye-btn {
+    position:absolute;
+    top:50%;
+    right:10px;
+    transform:translateY(-50%);
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    font-size:16px;
+    color:#0a1f44;
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+}
+
+.eye-btn:hover{
+    color:#1e90ff;
+}
 </style>
 </head>
 
@@ -105,6 +145,9 @@ border:1px solid #ddd;
         <table>
             <tr>
                 <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Género</th>
+                <th>Seguro</th>
                 <th>Cédula</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
@@ -116,6 +159,9 @@ border:1px solid #ddd;
             <?php foreach($usuarios as $u): ?>
             <tr>
                 <td><?= $u['nombre'] ?></td>
+                <td><?= $u['apellido'] ?></td>
+                <td><?= $u['genero'] ?></td>
+                <td><?= $u['seguro'] ?></td>
                 <td><?= $u['cedula'] ?></td>
                 <td><?= $u['telefono'] ?></td>
                 <td><?= $u['correo'] ?></td>
@@ -126,6 +172,9 @@ border:1px solid #ddd;
                     <button onclick="abrirEdit(
                         <?= $u['id'] ?>,
                         '<?= $u['nombre'] ?>',
+                        '<?= $u['apellido'] ?>',
+                        '<?= $u['genero'] ?>',
+                        '<?= $u['seguro'] ?>',
                         '<?= $u['cedula'] ?>',
                         '<?= $u['telefono'] ?>',
                         '<?= $u['correo'] ?>',
@@ -150,19 +199,36 @@ border:1px solid #ddd;
 <h3>Agregar Usuario</h3>
 
 <form id="formAdd">
-<input name="nombre" placeholder="Nombre completo" required>
-<input name="cedula" placeholder="Cédula (10 dígitos)" required>
-<input type="email" name="correo" placeholder="Correo electrónico" required>
-<input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
-<input name="telefono" placeholder="Teléfono (10 dígitos)" required>
+    <div class="form-row">
+        <input name="nombre" placeholder="Nombre" required>
+        <input name="apellido" placeholder="Apellido" required>
+    </div>
+    <div class="form-row">
+        <select name="genero" required>
+            <option value="">Género</option>
+            <option value="masculino">Masculino</option>
+            <option value="femenino">Femenino</option>
+        </select>
+        <input name="seguro" placeholder="Seguro (ARS o privado)" required>
+    </div>
+    <input name="cedula" placeholder="Cédula (10 dígitos)" required>
+    <input name="telefono" placeholder="Teléfono (10 dígitos)" required>
+    <input type="email" name="correo" placeholder="Correo electrónico" required>
+    <div class="password-field">
+        <input type="password" name="password" id="addUserPassword" placeholder="Contraseña (mínimo 6 caracteres)" required>
+        <button type="button" class="eye-btn" onclick="togglePassword('addUserPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+    </div>
+    <div class="password-field">
+        <input type="password" name="confirm_password" id="addUserConfirmPassword" placeholder="Confirmar Contraseña" required>
+        <button type="button" class="eye-btn" onclick="togglePassword('addUserConfirmPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+    </div>
+    <select name="rol">
+        <option value="user">Usuario</option>
+        <option value="doctor">Doctor</option>
+        <option value="admin">Admin</option>
+    </select>
 
-<select name="rol">
-<option value="user">Usuario</option>
-<option value="doctor">Doctor</option>
-<option value="admin">Admin</option>
-</select>
-
-<button type="submit">Guardar</button>
+    <button type="submit">Guardar</button>
 </form>
 </div>
 </div>
@@ -175,16 +241,35 @@ border:1px solid #ddd;
 
 <form id="formEdit">
 <input type="hidden" name="id" id="editId">
+<div class="form-row">
+    <input name="nombre" id="editNombre" placeholder="Nombre" required>
+    <input name="apellido" id="editApellido" placeholder="Apellido" required>
+</div>
+<div class="form-row">
+    <select name="genero" id="editGenero" required>
+        <option value="">Género</option>
+        <option value="masculino">Masculino</option>
+        <option value="femenino">Femenino</option>
+    </select>
+    <input name="seguro" id="editSeguro" placeholder="Seguro (ARS o privado)" required>
+</div>
 
-<input name="nombre" id="editNombre" placeholder="Nombre completo" required>
 <input name="cedula" id="editCedula" placeholder="Cédula (10 dígitos)" required>
-<input type="email" name="correo" id="editCorreo" placeholder="Correo electrónico" required>
 <input name="telefono" id="editTelefono" placeholder="Teléfono (10 dígitos)" required>
+<input type="email" name="correo" id="editCorreo" placeholder="Correo electrónico" required>
 
-<input type="password" name="password" placeholder="Nueva contraseña (opcional)">
+<div class="password-field">
+    <input type="password" name="password" id="editUserPassword" placeholder="Nueva contraseña (opcional)">
+    <button type="button" class="eye-btn" onclick="togglePassword('editUserPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+</div>
+<div class="password-field">
+    <input type="password" name="confirm_password" id="editUserConfirmPassword" placeholder="Confirmar contraseña">
+    <button type="button" class="eye-btn" onclick="togglePassword('editUserConfirmPassword')" title="Mostrar/Ocultar contraseña"><i class='bx bx-hide'></i></button>
+</div>
 
 <select name="rol" id="editRol">
 <option value="user">Usuario</option>
+<option value="doctor">Doctor</option>
 <option value="admin">Admin</option>
 </select>
 
@@ -214,9 +299,12 @@ const editRol = document.getElementById("editRol");
 function abrirAdd(){ modalAdd.style.display='flex'; }
 function cerrarAdd(){ modalAdd.style.display='none'; }
 
-function abrirEdit(id,nombre,cedula,telefono,correo,rol){
+function abrirEdit(id,nombre,apellido,genero,seguro,cedula,telefono,correo,rol){
     editId.value=id;
     editNombre.value=nombre;
+    document.getElementById('editApellido').value = apellido;
+    document.getElementById('editGenero').value = genero;
+    document.getElementById('editSeguro').value = seguro;
     editCedula.value=cedula;
     editTelefono.value=telefono;
     editCorreo.value=correo;
@@ -225,11 +313,27 @@ function abrirEdit(id,nombre,cedula,telefono,correo,rol){
 }
 function cerrarEdit(){ modalEdit.style.display='none'; }
 
+function togglePassword(inputId){
+    const input = document.getElementById(inputId);
+    const btn = input.nextElementSibling;
+    if(!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.innerHTML = input.type === 'password' ? "<i class='bx bx-hide'></i>" : "<i class='bx bx-show'></i>";
+}
+
 // AGREGAR
 formAdd.addEventListener("submit", function(e){
     e.preventDefault();
 
-    axios.post('../ajax/agregar_usuario.php', new FormData(this))
+    const pass = this.password.value;
+    const confirm = this.confirm_password.value;
+    if(pass !== confirm){
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    const formData = new FormData(this);
+    axios.post('ajax/agregar_usuario.php', formData)
     .then(res=>{
         alert(res.data.message);
         location.reload();
@@ -244,7 +348,15 @@ formAdd.addEventListener("submit", function(e){
 formEdit.addEventListener("submit", function(e){
     e.preventDefault();
 
-    axios.post('../ajax/editar_usuario.php', new FormData(this))
+    const pass = this.password.value;
+    const confirm = this.confirm_password.value;
+    if(pass && pass !== confirm){
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    const formData = new FormData(this);
+    axios.post('ajax/editar_usuario.php', formData)
     .then(res=>{
         alert(res.data.message);
         location.reload();
@@ -260,7 +372,7 @@ function cambiarRol(id, rolActual){
     const nuevoRol = prompt("Nuevo rol (admin/doctor/user):", rolActual);
 
     if(nuevoRol && ['admin','doctor','user'].includes(nuevoRol.toLowerCase())){
-        axios.post('../ajax/cambiar_rol_usuario.php',{
+        axios.post('ajax/cambiar_rol_usuario.php',{
             id:id,
             rol:nuevoRol.toLowerCase()
         })
@@ -276,7 +388,7 @@ function cambiarRol(id, rolActual){
 // ELIMINAR
 function eliminarUsuario(id){
     if(confirm("¿Eliminar usuario?")){
-        axios.post('../ajax/eliminar_usuario.php',{id:id})
+        axios.post('ajax/eliminar_usuario.php',{id:id})
         .then(res=>{
             alert(res.data.message);
             location.reload();
