@@ -382,7 +382,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="register-container">
 
     <form class="register-box" method="POST" onsubmit="return validarRegistro()">
-        <input type="hidden" name="csrf_token" value="<?= esc(obtenerTokenCSRF()) ?>">
 
         <h2>Crear Cuenta</h2>
         <p class="subtitle">Únete a Hospital & Human</p>

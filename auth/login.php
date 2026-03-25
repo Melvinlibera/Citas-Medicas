@@ -303,7 +303,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="login-container">
 
     <form class="login-box" method="POST" onsubmit="return validarLogin()">
-        <input type="hidden" name="csrf_token" value="<?= esc(obtenerTokenCSRF()) ?>">
 
         <h2>Iniciar Sesión</h2>
         <p class="subtitle">Bienvenido a Hospital & Human</p>
