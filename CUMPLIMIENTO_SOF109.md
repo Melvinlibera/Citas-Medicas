@@ -193,8 +193,8 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
 ```javascript
 const REGEX = {
     EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    CEDULA: /^\d{9,11}$/,
-    TELEFONO: /^\d{7,15}$/,
+    CEDULA: /^\d{11}$/,
+    TELEFONO: /^\d{10}$/,
     NOMBRE: /^[a-zA-Záéíóúñ\s]{3,100}$/,
     PASSWORD_MIN: /^.{6,}$/
 };
@@ -202,8 +202,8 @@ const REGEX = {
 
 Validaciones incluidas:
 - ✅ Email válido
-- ✅ Cédula de RD (9-11 dígitos)
-- ✅ Teléfono (7-15 dígitos)
+- ✅ Cédula de RD (exactamente 11 dígitos)
+- ✅ Teléfono (exactamente 10 dígitos)
 - ✅ Nombre (3+ caracteres alfabéticos)
 - ✅ Contraseña (6+ caracteres)
 
